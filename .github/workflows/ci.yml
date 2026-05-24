@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
+      - name: Smoke test Pix MCP
+        run: pnpm --filter payzu-mcp-pix test:smoke
+      - name: Guardrail no tenant refs
+        run: |
+          if grep -rn --include="*.ts" --include="*.json" --include="*.md" -iE "payzupay|processamento\.com/apps/" packages/*/src packages/*/README.md ; then
+            echo "FAIL: internal tenant reference found in source"; exit 1
+          fi
+      - name: Guardrail no admin endpoints
+        run: |
+          if grep -rn "/v1/admin\|/admin/" packages/*/src/ ; then
+            echo "FAIL: admin endpoint found in tools"; exit 1
+          fi

@@ -1,0 +1,19 @@
+{
+  "name": "payzu-pix",
+  "version": "0.6.1",
+  "description": "Opere sua conta PayZu Pix por IA: cobranças, saques, transferências, saldo, relatórios e infrações MED.",
+  "settings": [
+    {
+      "name": "Token de API PayZu",
+      "description": "Pegue no dashboard: web.payzu.processamento.com/credentials (Processamento) ou hub.payzu.com.br/settings/tokens (Hub).",
+      "envVar": "PAYZU_TOKEN",
+      "sensitive": true
+    }
+  ],
+  "mcpServers": {
+    "payzu-pix": {
+      "command": "npx",
+      "args": ["-y", "payzu-mcp-pix"]
+    }
+  }
+}
