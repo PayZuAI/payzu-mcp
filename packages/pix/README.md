@@ -1,0 +1,175 @@
+# payzu-mcp-pix
+
+MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Claude, Claude Code, Cursor, VS Code, Antigravity, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
+
+**29 tools** spanning Pix charges, withdrawals, internal transfers, account info, reports, callbacks and MED infractions. No admin endpoints exposed.
+
+## Hosted server (no install)
+
+```
+https://mcp.payzu.com.br/mcp
+```
+
+Authentication is OAuth: the browser asks for your API token once, and no credential is stored in your client config.
+
+- **Claude (web, desktop, mobile)** — Settings, Connectors, Add custom connector, paste the URL above.
+- **Claude Code** — `claude mcp add --transport http payzu-pix https://mcp.payzu.com.br/mcp`
+- **Cursor** — [install](https://cursor.com/en/install-mcp?name=payzu-pix&config=eyJ1cmwiOiJodHRwczovL21jcC5wYXl6dS5jb20uYnIvbWNwIn0=)
+- **VS Code** — [install](https://insiders.vscode.dev/redirect/mcp/install?name=payzu-pix&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fmcp.payzu.com.br%2Fmcp%22%7D)
+
+The shared hosted server exposes read and charge tools only. Withdrawals and internal transfers are disabled there, because a shared server has a single egress IP and that defeats the per-account IP whitelist that protects cash-out. Install locally to use them.
+
+## Local install (all 29 tools)
+
+### Claude Desktop
+
+Add to `claude_desktop_config.json` (`~/Library/Application Support/Claude/` on macOS, `%APPDATA%\Claude\` on Windows):
+
+```json
+{
+  "mcpServers": {
+    "payzu-pix": {
+      "command": "npx",
+      "args": ["-y", "payzu-mcp-pix"],
+      "env": {
+        "PAYZU_TOKEN": "<your-bearer-token-from-dashboard>"
+      }
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
+
+```json
+{
+  "mcpServers": {
+    "payzu-pix": {
+      "command": "npx",
+      "args": ["-y", "payzu-mcp-pix"],
+      "env": { "PAYZU_TOKEN": "..." }
+    }
+  }
+}
+```
+
+### Claude Code
+
+```bash
+claude mcp add payzu-pix --env PAYZU_TOKEN=<your-token> -- npx -y payzu-mcp-pix
+```
+
+## Configuration
+
+| Env var | Required | Default | Description |
+|---|---|---|---|
+| `PAYZU_TOKEN` | yes | — | Bearer token from the dashboard: [Processamento](https://web.payzu.processamento.com/credentials) or [Hub](https://hub.payzu.com.br/settings/tokens) |
+| `PAYZU_API_URL` | no | `https://api.payzu.processamento.com/v1` | Override for whitelabel tenants |
+
+## Revoking access
+
+The hosted server issues stateless OAuth tokens that wrap your API token, so there is no server-side session to delete. To cut off a connected client, rotate your API token in the dashboard ([Processamento](https://web.payzu.processamento.com/credentials) / [Hub](https://hub.payzu.com.br/settings/tokens)) — every issued token stops working at the API on the next call.
+
+## Tools
+
+Each tool description links to the corresponding endpoint page in [docs.payzu.com.br](https://docs.payzu.com.br/docs/pix-processamento).
+
+### Pix charges (4)
+- `pix_create` — POST /pix
+- `pix_get` — GET /pix
+- `pix_qr_code` — GET /pix/qr-code/{transactionId}
+- `pix_proof` — GET /proof/{id}
+
+### Withdrawals (6)
+- `withdraw_create` — POST /withdraw (by Pix key)
+- `withdraw_get` — GET /withdraw
+- `withdraw_by_qr` — POST /withdraw/qrcode
+- `withdraw_read_qr` — POST /pix/qrcode/read
+- `withdraw_dict` — GET /pix/key?pixKey={key}
+- `withdraw_proof` — GET /withdraw/proof/{id}
+
+### Refunds (1)
+- `refund_create` — POST /refund/{transactionId}
+
+### Webhooks (8)
+- `webhooks_create` — POST /user/webhooks
+- `webhooks_list` — GET /user/webhooks
+- `webhooks_get` — GET /user/webhooks/{id}
+- `webhooks_update` — PATCH /user/webhooks/{id}
+- `webhooks_delete` — DELETE /user/webhooks/{id}
+- `webhooks_rotate_secret` — POST /user/webhooks/{id}/rotate-secret
+- `webhooks_sent_quantity` — GET /user/webhooks/sent/quantity
+- `webhooks_sent_detail` — GET /user/webhooks/{id}/sent/{callbackId}
+
+### Internal transfer (2)
+- `internal_transfer_create` — POST /internal-transfer
+- `internal_transfer_get` — GET /internal-transfer
+
+### Account (3)
+- `account_profile` — GET /user
+- `account_balance` — GET /user/balance
+- `account_pix_keys` — GET /user/dict?key={key}
+
+### Reports (11)
+- `reports_list_transactions` — GET /user/transactions
+- `reports_get_transaction` — GET /user/transactions/{id}
+- `reports_create_csv` — POST /user/report
+- `reports_list_jobs` — GET /user/report
+- `reports_get_job` — GET /user/report/{id}
+- `reports_download` — POST /user/report/{id}/download
+- `reports_bank_statements` — GET /user/bank-statements
+- `reports_bank_statement` — GET /user/bank-statements/{id}
+- `reports_deposit_pending` — GET /user/deposit-pending
+- `reports_deposit_pending_get` — GET /user/deposit-pending/{id}
+- `reports_summary` — GET /user/summary
+
+### Callbacks (5)
+- `callbacks_list` — GET /user/callbacks
+- `callbacks_get` — GET /user/callbacks/{id}
+- `callbacks_resend` — POST /user/callbacks/resend/{transactionId}
+- `callbacks_resend_bulk` — POST /user/callbacks/resend
+- `callbacks_resend_webhook` — POST /user/callbacks/resend/webhook/{webhookId}
+
+### MED Infractions (5)
+- `infractions_list` — GET /user/infractions
+- `infractions_get` — GET /user/infractions/{id}
+- `infractions_create_defense` — POST /user/infractions/{id}/defenses (multipart)
+- `infractions_list_defenses` — GET /user/infractions/{id}/defenses
+- `infractions_get_defense` — GET /user/infractions/{id}/defenses/{defenseId}
+
+## Conventions enforced
+
+- **Amounts always in BRL decimals** (`99.90`, not `9990`). Note the schema does NOT catch a unit mistake: `9990` is a valid amount and means R$ 9,990.00.
+- **`clientReference` required** on all create operations for idempotency.
+- **`callbackUrl` required** on creates so PayZu can notify when status changes.
+- **Auto-retry** on 5xx/429 with exponential backoff + jitter (3 attempts max).
+- **Errors include `errorCode` and `requestId`** — log them and send to support if you need to investigate.
+
+## Custom base URL
+
+If your account uses a custom Pix Processamento endpoint, override the default via env:
+
+```json
+"env": {
+  "PAYZU_TOKEN": "<your-token>",
+  "PAYZU_API_URL": "https://api.example.processamento.com/v1"
+}
+```
+
+All 29 tools work identically against any compatible endpoint.
+
+## Links
+
+- Hosted server: https://mcp.payzu.com.br/mcp
+- MCP guide: https://docs.payzu.com.br/docs/pix-processamento/mcp
+- Documentation: https://docs.payzu.com.br/docs/pix-processamento
+- OpenAPI: https://docs.payzu.com.br/openapi.json
+- llms-full.txt: https://docs.payzu.com.br/pix-processamento/llms-full.txt
+- Issues: https://github.com/PayZuAI/payzu-mcp/issues
+- Pix SDKs: [`payzu-pix` on npm](https://www.npmjs.com/package/payzu-pix), [`payzu-pix` on PyPI](https://pypi.org/project/payzu-pix/)
+
+## License
+
+MIT

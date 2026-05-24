@@ -1,0 +1,61 @@
+{
+  "name": "payzu-mcp-pix",
+  "version": "0.7.0",
+  "description": "MCP server for PayZu Pix Processamento API. 29 tools: Pix charges, withdrawals, transfers, callbacks, MED infractions. Works with Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf.",
+  "type": "module",
+  "bin": {
+    "payzu-mcp-pix": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "assets",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "start": "node dist/index.js",
+    "test:smoke": "node scripts/smoke.mjs",
+    "dev:remote": "tsx watch --clear-screen=false src/remote.ts",
+    "start:remote": "node dist/remote.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "payzu",
+    "pix",
+    "brl",
+    "bacen",
+    "fintech",
+    "claude",
+    "claude-code",
+    "cursor",
+    "antigravity",
+    "gemini",
+    "ai-tools"
+  ],
+  "homepage": "https://docs.payzu.com.br/docs/pix-processamento",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PayZuAI/payzu-mcp.git",
+    "directory": "packages/pix"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "axios": "^1.13.2",
+    "envalid": "^8.1.1",
+    "zod": "^4.1.13",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.6.3",
+    "@types/express": "^4.17.23"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
