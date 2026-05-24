@@ -1,0 +1,52 @@
+{
+  "name": "payzu-mcp-pix",
+  "version": "0.1.0",
+  "description": "MCP server for PayZu Pix Processamento API. 29 tools: Pix charges, withdrawals, transfers, callbacks, MED infractions. Works with Claude Desktop, Cursor, Continue.",
+  "type": "module",
+  "bin": {
+    "payzu-mcp-pix": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "payzu",
+    "pix",
+    "brl",
+    "bacen",
+    "fintech",
+    "claude",
+    "cursor",
+    "ai-tools"
+  ],
+  "homepage": "https://docs.payzu.com.br/docs/pix-processamento",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PayZuPlus/payzu-mcp.git",
+    "directory": "packages/pix"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "axios": "^1.13.2",
+    "envalid": "^8.1.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

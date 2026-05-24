@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
+      - name: List Pix tools
+        run: |
+          cd packages/pix
+          chmod +x dist/index.js
+          echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \
+            | PAYZU_TOKEN=dummy node dist/index.js 2>/dev/null \
+            | grep -oE '"name":"[^"]+"' | wc -l
+      - name: Guardrail no payzupay refs
+        run: |
+          if grep -r --include="*.ts" --include="*.json" --include="*.md" -i "payzupay" packages/ ; then
+            echo "FAIL: 'payzupay' found in source"; exit 1
+          fi
+      - name: Guardrail no admin endpoints
+        run: |
+          if grep -rn "/v1/admin\|/admin/" packages/*/src/ ; then
+            echo "FAIL: admin endpoint found in tools"; exit 1
+          fi
