@@ -102,18 +102,18 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - **Auto-retry** on 5xx/429 with exponential backoff + jitter (3 attempts max).
 - **Errors include `requestId`** — log it and send to support if you need to investigate.
 
-## Whitelabel tenants
+## Custom base URL
 
-If you're on PayEvo, Owem, Magen, E2ePay, Saq or PaySamba, set `PAYZU_API_URL` to your tenant's base URL:
+If your account uses a custom Pix Processamento endpoint, override the default via env:
 
 ```json
 "env": {
-  "PAYZU_TOKEN": "PE_...",
-  "PAYZU_API_URL": "https://api.payevo.processamento.com/v1"
+  "PAYZU_TOKEN": "<your-token>",
+  "PAYZU_API_URL": "https://api.example.processamento.com/v1"
 }
 ```
 
-All 29 tools work identically — same engine, different brand.
+All 29 tools work identically against any compatible endpoint.
 
 ## Links
 

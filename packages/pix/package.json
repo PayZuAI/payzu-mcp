@@ -1,6 +1,6 @@
 {
   "name": "payzu-mcp-pix",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for PayZu Pix Processamento API. 29 tools: Pix charges, withdrawals, transfers, callbacks, MED infractions. Works with Claude Desktop, Cursor, Continue.",
   "type": "module",
   "bin": {

@@ -1,7 +1,7 @@
 {
   "name": "payzu-mcp-conta-digital",
-  "version": "0.1.0",
-  "description": "MCP server for PayZu Conta Digital API. 14 tools: Pix in/out, TED, transferência interna, saldo, perfil, extrato. Works with Claude Desktop, Cursor, Continue.",
+  "version": "0.1.1",
+  "description": "MCP server for PayZu Conta Digital API. 14 tools: Pix in/out, TED, transfer\u00eancia interna, saldo, perfil, extrato. Works with Claude Desktop, Cursor, Continue.",
   "type": "module",
   "bin": {
     "payzu-mcp-conta-digital": "./dist/index.js"
