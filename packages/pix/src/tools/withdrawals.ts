@@ -89,7 +89,7 @@ export function registerWithdrawalTools(server: McpServer) {
     },
     async ({ key }) => {
       try {
-        const { data } = await http.get(`/pix-key/${encodeURIComponent(key)}`);
+        const { data } = await http.get('/pix/key', { params: { pixKey: key } });
         return ok(data);
       } catch (e) {
         return fail(e);

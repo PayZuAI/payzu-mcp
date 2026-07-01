@@ -3,8 +3,8 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { http } from '../client.js';
 import { ok, fail, docBase } from '../utils.js';
 
-const TxStatus = z.enum(['PENDING', 'COMPLETED', 'CANCELED', 'REFUNDED', 'EXPIRED']);
-const TxType = z.enum(['DEPOSIT', 'WITHDRAW']);
+const TxStatus = z.enum(['PENDING', 'COMPLETED', 'CANCELED', 'WAITING_FOR_REFUND', 'REFUNDED', 'EXPIRED', 'ERROR']);
+const TxType = z.enum(['DEPOSIT', 'WITHDRAW', 'COMMISSION']);
 
 export function registerReportsTools(server: McpServer) {
   server.tool(
@@ -13,11 +13,11 @@ export function registerReportsTools(server: McpServer) {
     {
       status: TxStatus.optional(),
       type: TxType.optional(),
-      startDate: z.string().optional().describe('ISO 8601, ex: 2026-05-01T00:00:00Z'),
-      endDate: z.string().optional(),
+      dateFrom: z.string().optional().describe('ISO 8601, ex: 2026-05-01T00:00:00Z'),
+      dateTo: z.string().optional(),
       clientReference: z.string().optional(),
       limit: z.number().int().min(1).max(100).optional(),
-      cursor: z.string().optional(),
+      page: z.number().int().min(1).optional(),
     },
     async (args) => {
       try {
@@ -50,10 +50,10 @@ export function registerReportsTools(server: McpServer) {
     'reports.create_csv',
     `Cria um job assíncrono que gera CSV de transações para o período/filtros. Use para janelas grandes (mês, ano). Acompanhe via reports.get_job. Doc: ${docBase}/endpoints/reports/post_user_report`,
     {
-      startDate: z.string().describe('ISO 8601'),
-      endDate: z.string().describe('ISO 8601'),
-      status: TxStatus.optional(),
-      type: TxType.optional(),
+      dateFrom: z.string().describe('ISO 8601'),
+      dateTo: z.string().describe('ISO 8601'),
+      status: z.array(TxStatus).optional(),
+      type: z.array(TxType).optional(),
     },
     async (args) => {
       try {
@@ -71,7 +71,7 @@ export function registerReportsTools(server: McpServer) {
     {},
     async () => {
       try {
-        const { data } = await http.get('/user/reports');
+        const { data } = await http.get('/user/report');
         return ok(data);
       } catch (e) {
         return fail(e);
@@ -103,7 +103,7 @@ export function registerReportsTools(server: McpServer) {
     },
     async ({ id }) => {
       try {
-        const { data } = await http.get(`/user/report/${id}/download`);
+        const { data } = await http.post(`/user/report/${id}/download`);
         return ok(data);
       } catch (e) {
         return fail(e);
