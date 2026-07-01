@@ -11,7 +11,7 @@ export function registerCallbacksTools(server: McpServer) {
       transactionId: z.string().optional(),
       status: z.string().optional(),
       limit: z.number().int().min(1).max(100).optional(),
-      cursor: z.string().optional(),
+      page: z.number().int().min(1).optional(),
     },
     async (args) => {
       try {
@@ -32,7 +32,7 @@ export function registerCallbacksTools(server: McpServer) {
     },
     async ({ id }) => {
       try {
-        const { data } = await http.get(`/user/callback/${id}`);
+        const { data } = await http.get(`/user/callbacks/${id}`);
         return ok(data);
       } catch (e) {
         return fail(e);
@@ -48,7 +48,7 @@ export function registerCallbacksTools(server: McpServer) {
     },
     async ({ transactionId }) => {
       try {
-        const { data } = await http.post(`/user/callback/${transactionId}/resend`);
+        const { data } = await http.post(`/user/callbacks/resend/${transactionId}`);
         return ok(data);
       } catch (e) {
         return fail(e);
@@ -60,10 +60,10 @@ export function registerCallbacksTools(server: McpServer) {
     'callbacks.resend_bulk',
     `Reenvia múltiplos callbacks de uma só vez com base nos filtros. CUIDADO: use filtro estreito. Doc: ${docBase}/endpoints/callbacks/resend_user_callbacks`,
     {
-      startDate: z.string().describe('ISO 8601'),
-      endDate: z.string().describe('ISO 8601'),
-      status: z.string().optional(),
-      type: z.enum(['DEPOSIT', 'WITHDRAW']).optional(),
+      createdAtFrom: z.string().describe('ISO 8601 (obrigatório). Máx 30 dias no passado.'),
+      createdAtTo: z.string().describe('ISO 8601 (obrigatório). Janela máx 7 dias.'),
+      transactionIds: z.array(z.string()).optional().describe('Restringe a IDs específicos'),
+      transactionTypes: z.array(z.enum(['DEPOSIT', 'WITHDRAW', 'COMMISSION'])).optional(),
     },
     async (args) => {
       try {

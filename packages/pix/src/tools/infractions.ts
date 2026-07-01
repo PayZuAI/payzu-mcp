@@ -10,12 +10,12 @@ export function registerInfractionsTools(server: McpServer) {
     {
       status: z.string().optional(),
       limit: z.number().int().min(1).max(100).optional(),
-      cursor: z.string().optional(),
+      page: z.number().int().min(1).optional(),
     },
     async (args) => {
       try {
         const params = Object.fromEntries(Object.entries(args).filter(([, v]) => v != null));
-        const { data } = await http.get('/infractions', { params });
+        const { data } = await http.get('/user/infractions', { params });
         return ok(data);
       } catch (e) {
         return fail(e);
@@ -31,7 +31,7 @@ export function registerInfractionsTools(server: McpServer) {
     },
     async ({ id }) => {
       try {
-        const { data } = await http.get(`/infractions/${id}`);
+        const { data } = await http.get(`/user/infractions/${id}`);
         return ok(data);
       } catch (e) {
         return fail(e);
@@ -52,7 +52,7 @@ export function registerInfractionsTools(server: McpServer) {
     },
     async ({ id, ...rest }) => {
       try {
-        const { data } = await http.post(`/infractions/${id}/defense`, rest);
+        const { data } = await http.post(`/user/infractions/${id}/defenses`, rest);
         return ok(data);
       } catch (e) {
         return fail(e);
@@ -68,7 +68,7 @@ export function registerInfractionsTools(server: McpServer) {
     },
     async ({ id }) => {
       try {
-        const { data } = await http.get(`/infractions/${id}/defenses`);
+        const { data } = await http.get(`/user/infractions/${id}/defenses`);
         return ok(data);
       } catch (e) {
         return fail(e);
@@ -85,7 +85,7 @@ export function registerInfractionsTools(server: McpServer) {
     },
     async ({ id, defenseId }) => {
       try {
-        const { data } = await http.get(`/infractions/${id}/defense/${defenseId}`);
+        const { data } = await http.get(`/user/infractions/${id}/defenses/${defenseId}`);
         return ok(data);
       } catch (e) {
         return fail(e);
