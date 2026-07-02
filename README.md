@@ -1,6 +1,6 @@
 # PayZu MCP
 
-Model Context Protocol servers for the [PayZu APIs](https://docs.payzu.com.br). Plug into Claude Desktop, Cursor, Continue, and any other MCP-compatible AI client so the assistant can call PayZu directly with typed tools.
+Model Context Protocol servers for the [PayZu APIs](https://docs.payzu.com.br). Plug into Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf, and any other MCP-compatible AI client so the assistant can call PayZu directly with typed tools.
 
 ## Packages
 
@@ -32,7 +32,7 @@ Load **only** the one for the API you're integrating. Two separate packages avoi
 }
 ```
 
-Restart Claude Desktop. Test by asking _"qual meu saldo PayZu?"_ — Claude will call `account.balance` automatically.
+Restart Claude Desktop. Test by asking _"qual meu saldo PayZu?"_ — Claude will call `account_balance` automatically.
 
 ## Conventions enforced by all packages
 
@@ -40,7 +40,7 @@ Restart Claude Desktop. Test by asking _"qual meu saldo PayZu?"_ — Claude will
 - **`clientReference` required** on all create operations for idempotency.
 - **`callbackUrl` required** on creates so PayZu can notify status changes.
 - **Auto-retry** on 5xx/429 with exponential backoff + jitter (3 attempts).
-- **Errors include `requestId`** propagated from the API.
+- **Errors include `errorCode` and `requestId`** propagated from the API.
 - **Zero admin endpoints** exposed — only public/user-facing API surface.
 
 ## Custom base URL
@@ -74,7 +74,6 @@ npx @modelcontextprotocol/inspector node packages/pix/dist/index.js
 
 - Documentation: [docs.payzu.com.br](https://docs.payzu.com.br)
 - SDKs: [`payzu-pix`](https://www.npmjs.com/package/payzu-pix) (npm), [`payzu-pix`](https://pypi.org/project/payzu-pix/) (pypi)
-- SKILL.md (compact AI reference): [docs.payzu.com.br/SKILL.md](https://docs.payzu.com.br/SKILL.md)
 - llms-full.txt: [docs.payzu.com.br/llms-full.txt](https://docs.payzu.com.br/llms-full.txt)
 
 ## License

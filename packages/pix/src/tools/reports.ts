@@ -8,7 +8,7 @@ const TxType = z.enum(['DEPOSIT', 'WITHDRAW', 'COMMISSION']);
 
 export function registerReportsTools(server: McpServer) {
   server.tool(
-    'reports.list_transactions',
+    'reports_list_transactions',
     `Lista paginada das transações da conta. Aceita filtros por status, type, período e clientReference. Doc: ${docBase}/endpoints/reports/get_user_transactions`,
     {
       status: TxStatus.optional(),
@@ -31,7 +31,7 @@ export function registerReportsTools(server: McpServer) {
   );
 
   server.tool(
-    'reports.get_transaction',
+    'reports_get_transaction',
     `Retorna uma transação específica com logs de callback e infrações vinculadas. Doc: ${docBase}/endpoints/reports/get_user_transaction_by_id`,
     {
       id: z.string(),
@@ -47,8 +47,8 @@ export function registerReportsTools(server: McpServer) {
   );
 
   server.tool(
-    'reports.create_csv',
-    `Cria um job assíncrono que gera CSV de transações para o período/filtros. Use para janelas grandes (mês, ano). Acompanhe via reports.get_job. Doc: ${docBase}/endpoints/reports/post_user_report`,
+    'reports_create_csv',
+    `Cria um job assíncrono que gera CSV de transações para o período/filtros. Use para janelas grandes (mês, ano). Acompanhe via reports_get_job. Doc: ${docBase}/endpoints/reports/post_user_report`,
     {
       dateFrom: z.string().describe('ISO 8601'),
       dateTo: z.string().describe('ISO 8601'),
@@ -66,7 +66,7 @@ export function registerReportsTools(server: McpServer) {
   );
 
   server.tool(
-    'reports.list_jobs',
+    'reports_list_jobs',
     `Lista jobs de relatório criados pela conta autenticada. Doc: ${docBase}/endpoints/reports/list_user_reports`,
     {},
     async () => {
@@ -80,7 +80,7 @@ export function registerReportsTools(server: McpServer) {
   );
 
   server.tool(
-    'reports.get_job',
+    'reports_get_job',
     `Retorna o status de um job de relatório (PENDING, RUNNING, COMPLETED, FAILED). Doc: ${docBase}/endpoints/reports/get_user_report`,
     {
       id: z.string(),
@@ -96,7 +96,7 @@ export function registerReportsTools(server: McpServer) {
   );
 
   server.tool(
-    'reports.download',
+    'reports_download',
     `Retorna URL assinada (validade curta) para download do CSV. Doc: ${docBase}/endpoints/reports/download_user_report`,
     {
       id: z.string(),

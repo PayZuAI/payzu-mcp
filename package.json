@@ -16,5 +16,10 @@
   "packageManager": "pnpm@9.12.3",
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "fast-uri": "^3.1.3"
+    }
   }
 }

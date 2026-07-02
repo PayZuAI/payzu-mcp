@@ -4,7 +4,7 @@ import { ok, fail, docBase } from '../utils.js';
 
 export function registerAccountTools(server: McpServer) {
   server.tool(
-    'account.profile',
+    'account_profile',
     `Retorna o perfil, as permissões, os limites e as regras de tarifa da conta autenticada. Doc: ${docBase}/endpoints/account/get_user`,
     {},
     async () => {
@@ -18,7 +18,7 @@ export function registerAccountTools(server: McpServer) {
   );
 
   server.tool(
-    'account.balance',
+    'account_balance',
     `Retorna o saldo disponível e o saldo bloqueado da conta autenticada. Doc: ${docBase}/endpoints/account/get_user_balance`,
     {},
     async () => {

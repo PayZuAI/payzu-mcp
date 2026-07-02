@@ -5,7 +5,7 @@ import { ok, fail, docBase } from '../utils.js';
 
 export function registerCallbacksTools(server: McpServer) {
   server.tool(
-    'callbacks.list',
+    'callbacks_list',
     `Lista paginada dos logs de callbacks (webhooks) das transações da conta. Útil para auditoria e debug. Doc: ${docBase}/endpoints/callbacks/get_user_callbacks`,
     {
       transactionId: z.string().optional(),
@@ -25,7 +25,7 @@ export function registerCallbacksTools(server: McpServer) {
   );
 
   server.tool(
-    'callbacks.get',
+    'callbacks_get',
     `Retorna os detalhes completos de um callback específico: body enviado, resposta recebida, tempo de round-trip. Doc: ${docBase}/endpoints/callbacks/get_user_callback_by_id`,
     {
       id: z.string(),
@@ -41,7 +41,7 @@ export function registerCallbacksTools(server: McpServer) {
   );
 
   server.tool(
-    'callbacks.resend',
+    'callbacks_resend',
     `Reenvia o callback de uma transação específica para a callbackUrl configurada. Doc: ${docBase}/endpoints/callbacks/resend_user_callback_single`,
     {
       transactionId: z.string(),
@@ -57,7 +57,7 @@ export function registerCallbacksTools(server: McpServer) {
   );
 
   server.tool(
-    'callbacks.resend_bulk',
+    'callbacks_resend_bulk',
     `Reenvia múltiplos callbacks de uma só vez com base nos filtros. CUIDADO: use filtro estreito. Doc: ${docBase}/endpoints/callbacks/resend_user_callbacks`,
     {
       createdAtFrom: z.string().describe('ISO 8601 (obrigatório). Máx 30 dias no passado.'),

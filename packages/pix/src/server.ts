@@ -6,11 +6,12 @@ import { registerAccountTools } from './tools/account.js';
 import { registerReportsTools } from './tools/reports.js';
 import { registerCallbacksTools } from './tools/callbacks.js';
 import { registerInfractionsTools } from './tools/infractions.js';
+import { VERSION } from './version.js';
 
 export function createServer() {
   const server = new McpServer({
     name: 'payzu-mcp-pix',
-    version: '0.1.0',
+    version: VERSION,
   });
 
   registerPixTools(server);
