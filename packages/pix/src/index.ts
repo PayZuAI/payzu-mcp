@@ -2,9 +2,10 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createServer } from './server.js';
 import { env } from './env.js';
+import { VERSION } from './version.js';
 
 async function main() {
-  process.stderr.write(`[payzu-mcp-pix] starting v0.1.0 baseURL=${env.PAYZU_API_URL}\n`);
+  process.stderr.write(`[payzu-mcp-pix] starting v${VERSION} baseURL=${env.PAYZU_API_URL}\n`);
   const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);

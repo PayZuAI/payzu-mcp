@@ -1,6 +1,6 @@
 # payzu-mcp-pix
 
-MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Claude Desktop, Cursor, Continue, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
+MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
 
 **29 tools** spanning Pix charges, withdrawals, internal transfers, account info, reports, callbacks and MED infractions. No admin endpoints exposed.
 
@@ -52,47 +52,51 @@ Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
 Each tool description links to the corresponding endpoint page in [docs.payzu.com.br](https://docs.payzu.com.br/docs/pix-processamento).
 
 ### Pix charges (4)
-- `pix.create` — POST /pix
-- `pix.get` — GET /pix
-- `pix.qr_code` — GET /pix/qr-code/{id}
-- `pix.proof` — GET /proof/{id}
+- `pix_create` — POST /pix
+- `pix_get` — GET /pix
+- `pix_qr_code` — GET /pix/qr-code/{transactionId}
+- `pix_proof` — GET /proof/{id}
 
 ### Withdrawals (6)
-- `withdraw.create` — POST /withdraw (by Pix key)
-- `withdraw.get` — GET /withdraw
-- `withdraw.by_qr` — POST /withdraw/qrcode
-- `withdraw.read_qr` — POST /pix/qrcode/read
-- `withdraw.dict` — GET /pix-key/{key}
-- `withdraw.proof` — GET /withdraw/proof/{id}
+- `withdraw_create` — POST /withdraw (by Pix key)
+- `withdraw_get` — GET /withdraw
+- `withdraw_by_qr` — POST /withdraw/qrcode
+- `withdraw_read_qr` — POST /pix/qrcode/read
+- `withdraw_dict` — GET /pix/key?pixKey={key}
+- `withdraw_proof` — GET /withdraw/proof/{id}
 
 ### Internal transfer (2)
-- `internal_transfer.create` — POST /internal-transfer
-- `internal_transfer.get` — GET /internal-transfer
+- `internal_transfer_create` — POST /internal-transfer
+- `internal_transfer_get` — GET /internal-transfer
 
 ### Account (2)
-- `account.profile` — GET /user
-- `account.balance` — GET /user/balance
+- `account_profile` — GET /user
+- `account_balance` — GET /user/balance
 
 ### Reports (6)
-- `reports.list_transactions` — GET /user/transactions
-- `reports.get_transaction` — GET /user/transactions/{id}
-- `reports.create_csv` — POST /user/report
-- `reports.list_jobs` — GET /user/reports
-- `reports.get_job` — GET /user/report/{id}
-- `reports.download` — GET /user/report/{id}/download
+- `reports_list_transactions` — GET /user/transactions
+- `reports_get_transaction` — GET /user/transactions/{id}
+- `reports_create_csv` — POST /user/report
+- `reports_list_jobs` — GET /user/report
+- `reports_get_job` — GET /user/report/{id}
+- `reports_download` — POST /user/report/{id}/download
 
 ### Callbacks (4)
-- `callbacks.list` — GET /user/callbacks
-- `callbacks.get` — GET /user/callback/{id}
-- `callbacks.resend` — POST /user/callback/{id}/resend
-- `callbacks.resend_bulk` — POST /user/callbacks/resend
+- `callbacks_list` — GET /user/callbacks
+- `callbacks_get` — GET /user/callbacks/{id}
+- `callbacks_resend` — POST /user/callbacks/resend/{transactionId}
+- `callbacks_resend_bulk` — POST /user/callbacks/resend
 
 ### MED Infractions (5)
-- `infractions.list` — GET /infractions
-- `infractions.get` — GET /infractions/{id}
-- `infractions.create_defense` — POST /infractions/{id}/defense
-- `infractions.list_defenses` — GET /infractions/{id}/defenses
-- `infractions.get_defense` — GET /infractions/{id}/defense/{defenseId}
+- `infractions_list` — GET /user/infractions
+- `infractions_get` — GET /user/infractions/{id}
+- `infractions_create_defense` — POST /user/infractions/{id}/defenses (multipart)
+- `infractions_list_defenses` — GET /user/infractions/{id}/defenses
+- `infractions_get_defense` — GET /user/infractions/{id}/defenses/{defenseId}
+
+## Breaking change in 0.3.0
+
+Tool names moved from dots to underscores (`pix.create` -> `pix_create`). Dots are rejected by the Anthropic and OpenAI APIs (`^[a-zA-Z0-9_-]{1,64}$`), which silently broke every MCP client backed by those models. Update any tool allowlists that reference the old names. This release also fixes the request body of `withdraw_read_qr` (`emv`), `internal_transfer_create` (`payerAccountNumber`/`receiverAccountNumber`) and `infractions_create_defense` (multipart `defense` + `files`).
 
 ## Conventions enforced
 
@@ -100,7 +104,7 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - **`clientReference` required** on all create operations for idempotency.
 - **`callbackUrl` required** on creates so PayZu can notify when status changes.
 - **Auto-retry** on 5xx/429 with exponential backoff + jitter (3 attempts max).
-- **Errors include `requestId`** — log it and send to support if you need to investigate.
+- **Errors include `errorCode` and `requestId`** — log them and send to support if you need to investigate.
 
 ## Custom base URL
 
@@ -120,7 +124,6 @@ All 29 tools work identically against any compatible endpoint.
 - Documentation: https://docs.payzu.com.br/docs/pix-processamento
 - OpenAPI: https://docs.payzu.com.br/openapi.json
 - llms-full.txt: https://docs.payzu.com.br/pix-processamento/llms-full.txt
-- SKILL.md (compact reference for AI): https://docs.payzu.com.br/pix-processamento/SKILL.md
 - Issues: https://github.com/PayZuPlus/payzu-mcp/issues
 - npm SDKs: `npm install payzu-pix`
 

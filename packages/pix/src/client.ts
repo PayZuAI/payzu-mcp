@@ -1,10 +1,12 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { env } from './env.js';
+import { VERSION } from './version.js';
 
 export interface PayzuError {
   statusCode: number;
   error: string;
   message: string;
+  errorCode?: string;
   requestId?: string;
 }
 
@@ -27,7 +29,7 @@ export const http: AxiosInstance = axios.create({
   headers: {
     Authorization: `Bearer ${env.PAYZU_TOKEN}`,
     'Content-Type': 'application/json',
-    'User-Agent': `payzu-mcp-pix/0.1.0`,
+    'User-Agent': `payzu-mcp-pix/${VERSION}`,
   },
 });
 
@@ -49,8 +51,11 @@ export function formatError(err: unknown): string {
     const data = err.response?.data as PayzuError | undefined;
     const status = err.response?.status ?? 'network';
     const message = data?.message ?? err.message;
-    const requestId = data?.requestId ? ` (requestId=${data.requestId})` : '';
-    return `[${status}] ${message}${requestId}`;
+    const details = [
+      data?.errorCode ? `errorCode=${data.errorCode}` : '',
+      data?.requestId ? `requestId=${data.requestId}` : '',
+    ].filter(Boolean).join(', ');
+    return details ? `[${status}] ${message} (${details})` : `[${status}] ${message}`;
   }
   return err instanceof Error ? err.message : String(err);
 }

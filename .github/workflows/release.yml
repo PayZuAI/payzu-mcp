@@ -24,11 +24,25 @@ jobs:
       - run: pnpm -r build
       - name: Publish payzu-mcp-pix
         working-directory: packages/pix
-        run: npm publish --access=public --provenance
+        run: |
+          LOCAL=$(node -p "require('./package.json').version")
+          PUBLISHED=$(npm view "payzu-mcp-pix@$LOCAL" version 2>/dev/null || true)
+          if [ -n "$PUBLISHED" ]; then
+            echo "payzu-mcp-pix@$LOCAL ja publicado, pulando"
+          else
+            npm publish --access=public --provenance
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish payzu-mcp-conta-digital
         working-directory: packages/conta-digital
-        run: npm publish --access=public --provenance
+        run: |
+          LOCAL=$(node -p "require('./package.json').version")
+          PUBLISHED=$(npm view "payzu-mcp-conta-digital@$LOCAL" version 2>/dev/null || true)
+          if [ -n "$PUBLISHED" ]; then
+            echo "payzu-mcp-conta-digital@$LOCAL ja publicado, pulando"
+          else
+            npm publish --access=public --provenance
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -11,7 +11,7 @@ const Amount = z
 
 export function registerPixTools(server: McpServer) {
   server.tool(
-    'pix.create',
+    'pix_create',
     `Cria uma cobrança Pix dinâmica e retorna QR Code + ID. Use clientReference único e determinístico (ex: order-123) para idempotência. callbackUrl obrigatória se quiser ser notificado quando o pagador concluir o Pix. Doc: ${docBase}/endpoints/pix-operations/post_pix`,
     {
       amount: Amount,
@@ -32,7 +32,7 @@ export function registerPixTools(server: McpServer) {
   );
 
   server.tool(
-    'pix.get',
+    'pix_get',
     `Consulta uma cobrança Pix por id, clientReference OU endToEndId (use apenas um). Retorna status atual e detalhes. Doc: ${docBase}/endpoints/pix-operations/get_pix`,
     {
       id: z.string().optional(),
@@ -51,10 +51,10 @@ export function registerPixTools(server: McpServer) {
   );
 
   server.tool(
-    'pix.qr_code',
+    'pix_qr_code',
     `Retorna o QR Code de uma cobrança Pix renderizado como imagem PNG (URL ou base64). Doc: ${docBase}/endpoints/pix-operations/get_pix_qrcode`,
     {
-      id: z.string().describe('ID da cobrança Pix (retornado por pix.create).'),
+      id: z.string().describe('ID da cobrança Pix (retornado por pix_create).'),
     },
     async ({ id }) => {
       try {
@@ -67,7 +67,7 @@ export function registerPixTools(server: McpServer) {
   );
 
   server.tool(
-    'pix.proof',
+    'pix_proof',
     `Retorna o comprovante de uma transação Pix em PDF base64 ou JSON estruturado. Doc: ${docBase}/endpoints/pix-operations/get_proof`,
     {
       id: z.string().describe('ID da transação.'),
