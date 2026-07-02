@@ -76,13 +76,13 @@ export function registerInfractionsTools(server: McpServer) {
     `Submete defesa contra uma infração aberta, com texto (máx 1000 caracteres) e anexos (notas fiscais, comprovantes; máx 10MB no total, extensões executáveis recusadas). Cuidado: ação não reversível, valide com humano antes. Doc: ${docBase}/endpoints/infractions/post_infractions_defense`,
     {
       id: z.string().describe('ID da infração.'),
-      defense: z.string().min(10).max(1000).describe('Texto da defesa.'),
+      defense: z.string().min(10).max(1000).describe('Texto da defesa (entre 10 e 1000 caracteres).'),
       attachments: Attachments.optional().describe('Anexos opcionais (conteúdo em base64).'),
     },
     async ({ id, defense, attachments }) => {
       try {
         const { data } = await http.post(`/user/infractions/${id}/defenses`, defenseForm(defense, attachments), {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: { 'Content-Type': undefined },
         });
         return ok(data);
       } catch (e) {

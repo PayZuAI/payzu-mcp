@@ -9,6 +9,8 @@ const ANTHROPIC_OPENAI_TOOL_NAME = /^[a-zA-Z0-9_-]{1,64}$/;
 const GEMINI_TOOL_NAME = /^[a-zA-Z_][a-zA-Z0-9_.-]{0,63}$/;
 const TIMEOUT_MS = 15000;
 
+const active = { child: null };
+
 const EXPECTED_TOOLS = [
   'pix_create',
   'pix_get',
@@ -43,6 +45,7 @@ const EXPECTED_TOOLS = [
 
 function bail(message) {
   console.error(`SMOKE FALHOU: ${message}`);
+  if (active.child) active.child.kill('SIGKILL');
   process.exit(1);
 }
 
@@ -59,6 +62,7 @@ function createClient() {
     env: { ...process.env, PAYZU_TOKEN: 'dummy-token', PAYZU_API_URL: 'http://127.0.0.1:9' },
     stdio: ['pipe', 'pipe', 'inherit'],
   });
+  active.child = child;
   const pending = new Map();
   const state = { buffer: '', nextId: 1 };
 
