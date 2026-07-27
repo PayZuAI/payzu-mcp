@@ -1,0 +1,111 @@
+name: Quality
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency_review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Dependency Review (CVE high bloqueia; lib nova mostra OpenSSF Scorecard)
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+        with:
+          fail-on-severity: high
+          fail-on-scopes: runtime, development, unknown
+          comment-summary-in-pr: always
+          show-openssf-scorecard: true
+          warn-on-openssf-scorecard-level: 5
+
+  duplication:
+    name: Code Duplication
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js (v22)
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: jscpd (baseline 9.85% de linhas duplicadas, teto 10.5%)
+        working-directory: /tmp
+        env:
+          NPM_CONFIG_USERCONFIG: /dev/null
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org
+          NPM_CONFIG_IGNORE_SCRIPTS: 'true'
+        run: npx --yes jscpd@4.2.5 "$GITHUB_WORKSPACE" --min-tokens 70 --format "typescript,tsx,javascript,jsx" --ignore "**/node_modules/**,**/dist/**,**/.next/**,**/generated/**,**/build/**,**/*.min.js,**/coverage/**,**/.nx/**" --threshold 10.5
+
+  weak_code:
+    name: Weak Code (sonarjs nos arquivos alterados)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Node.js (v22)
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: sonarjs nos arquivos ts/tsx de producao alterados pelo PR
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          NPM_CONFIG_USERCONFIG: /dev/null
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org
+        run: |
+          diff_output=$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" HEAD -- '*.ts' '*.tsx')
+          mapfile -t files < <(printf '%s\n' "$diff_output" | grep -vE '(^|/)node_modules/|(^|/)dist/|(^|/)generated/|(^|/)build/|(^|/)\.next/|\.d\.ts$|\.spec\.|\.test\.' || true)
+          if [ "${#files[@]}" -eq 0 ] || [ -z "${files[0]}" ]; then echo 'sem arquivos ts/tsx de producao alterados'; exit 0; fi
+          mkdir -p /tmp/sonar-gate && cd /tmp/sonar-gate
+          npm init -y > /dev/null
+          npm i --no-audit --no-fund --ignore-scripts --loglevel=error eslint@9.39.5 typescript@5.9.3 typescript-eslint@8.65.0 eslint-plugin-sonarjs@3.0.5
+          cat > sonar.config.mjs <<'CFG'
+          import sonarjs from 'eslint-plugin-sonarjs';
+          import tseslint from 'typescript-eslint';
+          export default [
+            {
+              files: ['**/*.{ts,tsx}'],
+              languageOptions: { parser: tseslint.parser },
+              plugins: { sonarjs },
+              rules: {
+                'sonarjs/cognitive-complexity': ['error', 25],
+                'sonarjs/no-identical-functions': 'error',
+                'sonarjs/no-duplicated-branches': 'error',
+                'sonarjs/no-all-duplicated-branches': 'error',
+                'sonarjs/no-identical-expressions': 'error',
+                'sonarjs/no-collapsible-if': 'error',
+                'sonarjs/no-redundant-boolean': 'error',
+                'sonarjs/prefer-immediate-return': 'error',
+                'sonarjs/no-inverted-boolean-check': 'error',
+              },
+            },
+          ];
+          CFG
+          cd "$GITHUB_WORKSPACE"
+          /tmp/sonar-gate/node_modules/.bin/eslint --no-config-lookup --config /tmp/sonar-gate/sonar.config.mjs -- "${files[@]}"
