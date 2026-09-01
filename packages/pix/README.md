@@ -1,12 +1,27 @@
 # payzu-mcp-pix
 
-MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
+MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Claude, Claude Code, Cursor, VS Code, Antigravity, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
 
 **29 tools** spanning Pix charges, withdrawals, internal transfers, account info, reports, callbacks and MED infractions. No admin endpoints exposed.
 
-## Install
+## Hosted server (no install)
 
-### Claude Desktop / Continue
+```
+https://mcp.payzu.com.br/mcp
+```
+
+Authentication is OAuth: the browser asks for your API token once, and no credential is stored in your client config.
+
+- **Claude (web, desktop, mobile)** — Settings, Connectors, Add custom connector, paste the URL above.
+- **Claude Code** — `claude mcp add --transport http payzu-pix https://mcp.payzu.com.br/mcp`
+- **Cursor** — [install](https://cursor.com/en/install-mcp?name=payzu-pix&config=eyJ1cmwiOiJodHRwczovL21jcC5wYXl6dS5jb20uYnIvbWNwIn0=)
+- **VS Code** — [install](https://insiders.vscode.dev/redirect/mcp/install?name=payzu-pix&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fmcp.payzu.com.br%2Fmcp%22%7D)
+
+The shared hosted server exposes read and charge tools only. Withdrawals and internal transfers are disabled there, because a shared server has a single egress IP and that defeats the per-account IP whitelist that protects cash-out. Install locally to use them.
+
+## Local install (all 29 tools)
+
+### Claude Desktop
 
 Add to `claude_desktop_config.json` (`~/Library/Application Support/Claude/` on macOS, `%APPDATA%\Claude\` on Windows):
 
@@ -38,6 +53,12 @@ Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
     }
   }
 }
+```
+
+### Claude Code
+
+```bash
+claude mcp add payzu-pix --env PAYZU_TOKEN=<your-token> -- npx -y payzu-mcp-pix
 ```
 
 ## Configuration
@@ -98,10 +119,6 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - `infractions_list_defenses` — GET /user/infractions/{id}/defenses
 - `infractions_get_defense` — GET /user/infractions/{id}/defenses/{defenseId}
 
-## Breaking change in 0.3.0
-
-Tool names moved from dots to underscores (`pix.create` -> `pix_create`). Dots are rejected by the Anthropic and OpenAI APIs (`^[a-zA-Z0-9_-]{1,64}$`), which silently broke every MCP client backed by those models. Update any tool allowlists that reference the old names. This release also fixes the request body of `withdraw_read_qr` (`emv`), `internal_transfer_create` (`payerAccountNumber`/`receiverAccountNumber`) and `infractions_create_defense` (multipart `defense` + `files`).
-
 ## Conventions enforced
 
 - **Amounts always in BRL decimals** (`99.90`, not `9990`). The MCP rejects centavos at input validation.
@@ -125,11 +142,13 @@ All 29 tools work identically against any compatible endpoint.
 
 ## Links
 
+- Hosted server: https://mcp.payzu.com.br/mcp
+- MCP guide: https://docs.payzu.com.br/docs/pix-processamento/mcp
 - Documentation: https://docs.payzu.com.br/docs/pix-processamento
 - OpenAPI: https://docs.payzu.com.br/openapi.json
 - llms-full.txt: https://docs.payzu.com.br/pix-processamento/llms-full.txt
 - Issues: https://github.com/PayZuAI/payzu-mcp/issues
-- npm SDKs: `npm install payzu-pix`
+- Pix SDKs: [`payzu-pix` on npm](https://www.npmjs.com/package/payzu-pix), [`payzu-pix` on PyPI](https://pypi.org/project/payzu-pix/)
 
 ## License
 
