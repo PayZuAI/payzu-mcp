@@ -375,12 +375,17 @@ function oauthError(res: express.Response, status: number, error: string, descri
   res.status(status).json({ error, error_description: description });
 }
 
-const CONSENT_CSP = "default-src 'none'; img-src 'self'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'";
+const CONSENT_CSP_BASE = "default-src 'none'; img-src 'self'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; frame-ancestors 'none'";
 
-function sendConsent(res: express.Response, status: number, html: string) {
+function consentCsp(redirectUri: string | undefined): string {
+  const origin = parseRedirectUri(redirectUri)?.origin;
+  return `${CONSENT_CSP_BASE}; form-action 'self'${origin ? ` ${origin}` : ''}`;
+}
+
+function sendConsent(res: express.Response, status: number, redirectUri: string | undefined, html: string) {
   res
     .status(status)
-    .set('Content-Security-Policy', CONSENT_CSP)
+    .set('Content-Security-Policy', consentCsp(redirectUri))
     .set('X-Frame-Options', 'DENY')
     .type('html')
     .send(html);
@@ -460,7 +465,7 @@ export function createOauthRouter(config: OauthConfig): express.Router {
       res.status(400).send('Requisição de autorização inválida.');
       return;
     }
-    sendConsent(res, 200, consentPage({
+    sendConsent(res, 200, redirect_uri, consentPage({
       client_id: client_id ?? '',
       redirect_uri: redirect_uri ?? '',
       state: state ?? '',
@@ -476,7 +481,7 @@ export function createOauthRouter(config: OauthConfig): express.Router {
       return;
     }
     const rerender = (message: string) => {
-      sendConsent(res, 401, consentPage({
+      sendConsent(res, 401, redirect_uri, consentPage({
         client_id: client_id ?? '',
         redirect_uri: redirect_uri ?? '',
         state: state ?? '',
