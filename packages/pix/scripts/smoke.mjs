@@ -41,6 +41,22 @@ const EXPECTED_TOOLS = [
   'infractions_create_defense',
   'infractions_list_defenses',
   'infractions_get_defense',
+  'refund_create',
+  'webhooks_create',
+  'webhooks_list',
+  'webhooks_get',
+  'webhooks_update',
+  'webhooks_delete',
+  'webhooks_rotate_secret',
+  'webhooks_sent_quantity',
+  'webhooks_sent_detail',
+  'reports_bank_statements',
+  'reports_bank_statement',
+  'reports_deposit_pending',
+  'reports_deposit_pending_get',
+  'reports_summary',
+  'account_pix_keys',
+  'callbacks_resend_webhook',
 ];
 
 function bail(message) {

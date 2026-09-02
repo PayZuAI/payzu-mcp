@@ -86,7 +86,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     'withdraw_read_qr',
     {
       title: 'Ler QR Code',
-      description: `Decodifica um QR Code Pix (formato EMV) e retorna recebedor, valor (se presente) e metadados. Use antes de withdraw_by_qr para confirmar com o usuário. Doc: ${docBase}/endpoints/withdrawals/post_pix_qrcode_read`,
+      description: `Decodifica um QR Code Pix (formato EMV) e retorna recebedor, valor (se presente) e metadados. Use antes de withdraw_by_qr para confirmar com o usuário. Doc: ${docBase}/endpoints/keys-and-dict/post_pix_qrcode_read`,
       inputSchema: {
         qrCode: z.string().describe('Conteúdo bruto do QR Code copia-e-cola.'),
       },
@@ -105,7 +105,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     'withdraw_dict',
     {
       title: 'Consultar chave Pix (DICT)',
-      description: `Consulta o DICT (diretório do Bacen) por chave Pix antes de pagar. Retorna nome do titular, banco, etc. Doc: ${docBase}/endpoints/withdrawals/get_pix_key`,
+      description: `Consulta o DICT (diretório do Bacen) por chave Pix antes de pagar. Retorna nome do titular, banco, etc. Doc: ${docBase}/endpoints/keys-and-dict/get_pix_key`,
       inputSchema: {
         key: z.string().describe('Chave Pix a consultar (CPF, CNPJ, telefone 5511..., email, EVP).'),
       },

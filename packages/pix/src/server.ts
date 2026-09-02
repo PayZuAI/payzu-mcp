@@ -7,6 +7,8 @@ import { registerAccountTools } from './tools/account.js';
 import { registerReportsTools } from './tools/reports.js';
 import { registerCallbacksTools } from './tools/callbacks.js';
 import { registerInfractionsTools } from './tools/infractions.js';
+import { registerWebhookTools } from './tools/webhooks.js';
+import { registerRefundTools } from './tools/refund.js';
 import { VERSION } from './version.js';
 
 export interface ServerOptions {
@@ -25,8 +27,10 @@ export function createServer(http: AxiosInstance, options: ServerOptions = {}) {
   registerReportsTools(server, http);
   registerCallbacksTools(server, http);
   registerInfractionsTools(server, http);
+  registerWebhookTools(server, http);
   registerWithdrawalTools(server, http, options.enableCashOut);
   registerInternalTransferTools(server, http, options.enableCashOut);
+  registerRefundTools(server, http, options.enableCashOut);
 
   return server;
 }

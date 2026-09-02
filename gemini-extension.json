@@ -1,6 +1,6 @@
 {
   "name": "payzu-pix",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Opere sua conta PayZu Pix por IA: cobranças, saques, transferências, saldo, relatórios e infrações MED.",
   "settings": [
     {
@@ -13,7 +13,10 @@
   "mcpServers": {
     "payzu-pix": {
       "command": "npx",
-      "args": ["-y", "payzu-mcp-pix"]
+      "args": [
+        "-y",
+        "payzu-mcp-pix"
+      ]
     }
   }
 }

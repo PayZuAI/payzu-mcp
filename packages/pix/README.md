@@ -90,27 +90,47 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - `withdraw_dict` — GET /pix/key?pixKey={key}
 - `withdraw_proof` — GET /withdraw/proof/{id}
 
+### Refunds (1)
+- `refund_create` — POST /refund/{transactionId}
+
+### Webhooks (8)
+- `webhooks_create` — POST /user/webhooks
+- `webhooks_list` — GET /user/webhooks
+- `webhooks_get` — GET /user/webhooks/{id}
+- `webhooks_update` — PATCH /user/webhooks/{id}
+- `webhooks_delete` — DELETE /user/webhooks/{id}
+- `webhooks_rotate_secret` — POST /user/webhooks/{id}/rotate-secret
+- `webhooks_sent_quantity` — GET /user/webhooks/sent/quantity
+- `webhooks_sent_detail` — GET /user/webhooks/{id}/sent/{callbackId}
+
 ### Internal transfer (2)
 - `internal_transfer_create` — POST /internal-transfer
 - `internal_transfer_get` — GET /internal-transfer
 
-### Account (2)
+### Account (3)
 - `account_profile` — GET /user
 - `account_balance` — GET /user/balance
+- `account_pix_keys` — GET /user/dict?key={key}
 
-### Reports (6)
+### Reports (11)
 - `reports_list_transactions` — GET /user/transactions
 - `reports_get_transaction` — GET /user/transactions/{id}
 - `reports_create_csv` — POST /user/report
 - `reports_list_jobs` — GET /user/report
 - `reports_get_job` — GET /user/report/{id}
 - `reports_download` — POST /user/report/{id}/download
+- `reports_bank_statements` — GET /user/bank-statements
+- `reports_bank_statement` — GET /user/bank-statements/{id}
+- `reports_deposit_pending` — GET /user/deposit-pending
+- `reports_deposit_pending_get` — GET /user/deposit-pending/{id}
+- `reports_summary` — GET /user/summary
 
-### Callbacks (4)
+### Callbacks (5)
 - `callbacks_list` — GET /user/callbacks
 - `callbacks_get` — GET /user/callbacks/{id}
 - `callbacks_resend` — POST /user/callbacks/resend/{transactionId}
 - `callbacks_resend_bulk` — POST /user/callbacks/resend
+- `callbacks_resend_webhook` — POST /user/callbacks/resend/webhook/{webhookId}
 
 ### MED Infractions (5)
 - `infractions_list` — GET /user/infractions
@@ -121,7 +141,7 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 
 ## Conventions enforced
 
-- **Amounts always in BRL decimals** (`99.90`, not `9990`). The MCP rejects centavos at input validation.
+- **Amounts always in BRL decimals** (`99.90`, not `9990`). Note the schema does NOT catch a unit mistake: `9990` is a valid amount and means R$ 9,990.00.
 - **`clientReference` required** on all create operations for idempotency.
 - **`callbackUrl` required** on creates so PayZu can notify when status changes.
 - **Auto-retry** on 5xx/429 with exponential backoff + jitter (3 attempts max).

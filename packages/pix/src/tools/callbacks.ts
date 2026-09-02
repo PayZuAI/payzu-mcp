@@ -86,4 +86,23 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
       }
     },
   );
+
+  server.registerTool(
+    'callbacks_resend_webhook',
+    {
+      title: 'Reenviar callbacks de um webhook',
+      description: `Reenfileira as notificações de um webhook específico. Use depois que o endpoint do cliente voltou do ar, para recuperar o que falhou naquele destino, sem reenviar o que já foi entregue nos outros. Doc: ${docBase}/endpoints/callbacks/resend_user_callbacks_webhook`,
+      inputSchema: {
+        webhookId: z.string().min(1).describe('Id do webhook cujas entregas serão reenviadas.'),
+      },
+    },
+    async ({ webhookId }) => {
+      try {
+        const { data } = await http.post(`/user/callbacks/resend/webhook/${webhookId}`);
+        return ok(data);
+      } catch (e) {
+        return fail(e);
+      }
+    },
+  );
 }
