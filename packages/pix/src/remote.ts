@@ -16,7 +16,7 @@ const env = cleanEnv(process.env, {
     desc: 'Base URL of the Pix Processamento API',
   }),
   MCP_PUBLIC_URL: url({
-    default: 'https://mcp.payzu.processamento.com',
+    default: 'https://mcp.payzu.com.br',
     desc: 'Public base URL of this MCP server (OAuth issuer)',
   }),
   MCP_TOKEN_KEY: str({
