@@ -11,7 +11,7 @@ const Amount = z
     'Valor em REAIS decimais (BRL). Ex: R$ 99,90 = 99.90. NUNCA em centavos: 9990 seria aceito como R$ 9.990,00.',
   );
 
-export function registerRefundTools(server: McpServer, http: AxiosInstance, enableCashOut = true) {
+export function registerRefundTools(server: McpServer, http: AxiosInstance, enableCashOut = false) {
   if (!enableCashOut) {
     registerCashOutUnavailable(server, 'refund_create', 'Estornar cobrança');
     return;
@@ -21,7 +21,7 @@ export function registerRefundTools(server: McpServer, http: AxiosInstance, enab
     'refund_create',
     {
       title: 'Estornar cobrança Pix',
-      description: `Devolve ao pagador o valor de uma cobrança Pix já recebida. AÇÃO IRREVERSÍVEL: o dinheiro sai da conta e não volta. Confirme o valor e o transactionId com o usuário antes de chamar. Omita amount para estornar o valor cheio; informe amount para estorno parcial. Doc: ${docBase}/endpoints/refunds/post_refund`,
+      description: `Devolve ao pagador o valor de uma cobrança Pix já recebida. AÇÃO IRREVERSÍVEL: o dinheiro sai da conta e não volta. Confirme o valor e o transactionId com o usuário antes de chamar. Omita amount para estornar o valor cheio; informe amount para estorno parcial (pode haver mais de um, até o valor original). O processamento é assíncrono: a resposta traz a transação com refundStatus PENDING e a lista refunds (mais recente primeiro); a conclusão chega por webhook ou em nova consulta. Doc: ${docBase}/endpoints/refunds/post_refund`,
       inputSchema: {
         transactionId: z.string().min(1).describe('Id da transação de entrada que será estornada.'),
         amount: Amount.optional().describe(
@@ -30,6 +30,7 @@ export function registerRefundTools(server: McpServer, http: AxiosInstance, enab
         description: z.string().optional().describe('Texto livre que descreve o motivo do estorno.'),
         clientReference: z
           .string()
+          .min(1)
           .max(64)
           .optional()
           .describe(

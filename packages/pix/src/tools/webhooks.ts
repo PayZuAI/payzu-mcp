@@ -1,23 +1,11 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AxiosInstance } from 'axios';
-import { ok, fail, docBase } from '../utils.js';
-
-const EVENTS = [
-  'TRANSACTION_PENDING',
-  'TRANSACTION_COMPLETED',
-  'TRANSACTION_CANCELED',
-  'TRANSACTION_WAITING_FOR_REFUND',
-  'TRANSACTION_REFUNDED',
-  'TRANSACTION_EXPIRED',
-  'TRANSACTION_ERROR',
-  'TRANSACTION_SUSPECTED_FRAUD',
-  'TRANSACTION_SUSPECTED_FRAUD_REVERSAL',
-  'INFRACTION_CHANGED',
-] as const;
+import { ok, fail, docBase, SECRET_ONCE } from '../utils.js';
+import { WebhookEvent } from '../schemas.js';
 
 const Events = z
-  .array(z.enum(EVENTS))
+  .array(WebhookEvent)
   .describe('Eventos assinados. Omita ou mande vazio para receber todos.');
 
 export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
@@ -25,7 +13,7 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_create',
     {
       title: 'Cadastrar webhook',
-      description: `Cadastra uma URL HTTPS que recebe notificação quando a transação muda de estado. Use generateSecret para assinar as chamadas com HMAC, que é como o receptor confirma que a notificação veio da PayZu. Doc: ${docBase}/endpoints/webhooks/post_user_webhook`,
+      description: `Cadastra uma URL HTTPS que recebe notificação quando a transação muda de estado. Use generateSecret para assinar as chamadas com HMAC, que é como o receptor confirma que a notificação veio da PayZu. Com generateSecret, a resposta traz o secret: ${SECRET_ONCE} Doc: ${docBase}/endpoints/webhooks/post_user_webhook`,
       inputSchema: {
         url: z.string().url().describe('URL HTTPS que vai receber os POSTs.'),
         events: Events.optional(),
@@ -129,12 +117,12 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_rotate_secret',
     {
       title: 'Rotacionar segredo do webhook',
-      description: `Gera um segredo HMAC novo para o webhook e invalida o anterior. QUEBRA a verificação de assinatura do receptor até ele passar a usar o segredo novo, então avise o usuário de que ele precisa atualizar o sistema dele. Doc: ${docBase}/endpoints/webhooks/post_user_webhook_rotate_secret`,
+      description: `Gera um segredo HMAC novo para o webhook e invalida o anterior. QUEBRA a verificação de assinatura do receptor até ele passar a usar o segredo novo, então avise o usuário de que ele precisa atualizar o sistema dele. ${SECRET_ONCE} Doc: ${docBase}/endpoints/webhooks/post_user_webhook_rotate_secret`,
       inputSchema: { id: z.string().min(1) },
     },
     async ({ id }) => {
       try {
-        const { data } = await http.post(`/user/webhooks/${id}/rotate-secret`);
+        const { data } = await http.post(`/user/webhooks/${id}/rotate-secret`, {});
         return ok(data);
       } catch (e) {
         return fail(e);

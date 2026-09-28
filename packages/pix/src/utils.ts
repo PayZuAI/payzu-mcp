@@ -25,6 +25,26 @@ export function ok(data: unknown, stripFields: readonly string[] = ['qrCodeBase6
   };
 }
 
+export function okImage(data: ArrayBuffer, mimeType: string) {
+  return {
+    content: [
+      {
+        type: 'image' as const,
+        data: Buffer.from(data).toString('base64'),
+        mimeType,
+      },
+    ],
+  };
+}
+
+export function toQuery(args: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(args)
+      .filter(([, v]) => v != null)
+      .map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : v]),
+  );
+}
+
 export function fail(err: unknown) {
   return {
     isError: true,
@@ -38,6 +58,8 @@ export function fail(err: unknown) {
 }
 
 export const docBase = 'https://docs.payzu.com.br/docs/pix-processamento';
+
+export const SECRET_ONCE = 'O segredo aparece só nesta resposta e não existe rota para lê-lo de novo: entregue ao usuário para guardar em local seguro e não o repita depois.';
 
 const CASHOUT_UNAVAILABLE = [
   'Esta operação (que movimenta dinheiro para fora da conta) NÃO está disponível neste conector hospedado.',

@@ -42,10 +42,10 @@ export function registerAccountTools(server: McpServer, http: AxiosInstance) {
   server.registerTool(
     'account_pix_keys',
     {
-      title: 'Chaves Pix da conta',
-      description: `Consulta uma chave Pix registrada NA PRÓPRIA conta, para conferir titularidade antes de divulgar a chave. Não confunde com withdraw_dict, que consulta chave de TERCEIRO no DICT antes de pagar. Doc: ${docBase}/endpoints/keys-and-dict/get_user_dict`,
+      title: 'Consultar chave Pix para pagamento',
+      description: `Consulta no DICT uma chave Pix de terceiro antes de pagar e retorna o titular (nome e documento formatado), tipo de pessoa, tipo de conta e instituição. Exige token com permissão WITHDRAW. Não lista as chaves da própria conta. Para a mesma consulta com agência e número da conta, ou com token só de DEPOSIT, use withdraw_dict. Doc: ${docBase}/endpoints/keys-and-dict/get_user_dict`,
       inputSchema: {
-        key: z.string().min(1).describe('A chave Pix a consultar.'),
+        key: z.string().min(1).max(77).describe('Chave Pix a consultar: CPF, CNPJ, telefone +55 com DDD, e-mail ou EVP.'),
       },
     },
     async ({ key }) => {

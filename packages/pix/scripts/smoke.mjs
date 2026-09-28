@@ -57,6 +57,9 @@ const EXPECTED_TOOLS = [
   'reports_summary',
   'account_pix_keys',
   'callbacks_resend_webhook',
+  'callbacks_resend_webhook_bulk',
+  'callbacks_create_secret',
+  'callbacks_rotate_secret',
 ];
 
 function bail(message) {

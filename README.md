@@ -6,7 +6,7 @@ Model Context Protocol servers for the [PayZu APIs](https://docs.payzu.com.br). 
 
 | Package | API | Tools | Install |
 |---|---|---|---|
-| [`payzu-mcp-pix`](packages/pix) | Pix Processamento | 29 | `npx -y payzu-mcp-pix` |
+| [`payzu-mcp-pix`](packages/pix) | Pix Processamento | 48 | `npx -y payzu-mcp-pix` |
 
 ## Hosted server (no install)
 
@@ -47,8 +47,8 @@ Restart Claude Desktop. Test by asking _"qual meu saldo PayZu?"_ — Claude will
 
 - **Amounts in BRL decimals** (`99.90`, not `9990`). Centavos at input are rejected.
 - **`clientReference` required** on all create operations for idempotency.
-- **`callbackUrl` required** on creates so PayZu can notify status changes.
-- **Auto-retry** on 5xx/429 with exponential backoff + jitter (3 attempts).
+- **`callbackUrl` optional** on creates: pass it when you have an endpoint to be notified of status changes, or poll with the get tools.
+- **Auto-retry on reads only** (`GET`) on 408, 429, 500, 502, 503 and 504, with exponential backoff + jitter (3 attempts). Creates are never retried.
 - **Errors include `errorCode` and `requestId`** propagated from the API.
 - **Zero admin endpoints** exposed — only public/user-facing API surface.
 

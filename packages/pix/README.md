@@ -2,7 +2,7 @@
 
 MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Claude, Claude Code, Cursor, VS Code, Antigravity, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
 
-**29 tools** spanning Pix charges, withdrawals, internal transfers, account info, reports, callbacks and MED infractions. No admin endpoints exposed.
+**48 tools** covering every operation of the public Pix API: charges, withdrawals, refunds, internal transfers, account info, reports, webhooks, callbacks and MED infractions. No admin endpoints exposed.
 
 ## Hosted server (no install)
 
@@ -17,9 +17,9 @@ Authentication is OAuth: the browser asks for your API token once, and no creden
 - **Cursor** — [install](https://cursor.com/en/install-mcp?name=payzu-pix&config=eyJ1cmwiOiJodHRwczovL21jcC5wYXl6dS5jb20uYnIvbWNwIn0=)
 - **VS Code** — [install](https://insiders.vscode.dev/redirect/mcp/install?name=payzu-pix&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fmcp.payzu.com.br%2Fmcp%22%7D)
 
-The shared hosted server exposes read and charge tools only. Withdrawals and internal transfers are disabled there, because a shared server has a single egress IP and that defeats the per-account IP whitelist that protects cash-out. Install locally to use them.
+The shared hosted server does not move money out of the account. Withdrawals, refunds and internal transfers (marked ¹ below) are disabled there, because a shared server has a single egress IP and that defeats the per-account IP whitelist that protects cash-out. Install locally to use them.
 
-## Local install (all 29 tools)
+## Local install (all 48 tools)
 
 ### Claude Desktop
 
@@ -83,15 +83,15 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - `pix_proof` — GET /proof/{id}
 
 ### Withdrawals (6)
-- `withdraw_create` — POST /withdraw (by Pix key)
+- `withdraw_create` — POST /withdraw (by Pix key) ¹
 - `withdraw_get` — GET /withdraw
-- `withdraw_by_qr` — POST /withdraw/qrcode
+- `withdraw_by_qr` — POST /withdraw/qrcode ¹
 - `withdraw_read_qr` — POST /pix/qrcode/read
 - `withdraw_dict` — GET /pix/key?pixKey={key}
 - `withdraw_proof` — GET /withdraw/proof/{id}
 
 ### Refunds (1)
-- `refund_create` — POST /refund/{transactionId}
+- `refund_create` — POST /refund/{transactionId} ¹
 
 ### Webhooks (8)
 - `webhooks_create` — POST /user/webhooks
@@ -104,13 +104,13 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - `webhooks_sent_detail` — GET /user/webhooks/{id}/sent/{callbackId}
 
 ### Internal transfer (2)
-- `internal_transfer_create` — POST /internal-transfer
+- `internal_transfer_create` — POST /internal-transfer ¹
 - `internal_transfer_get` — GET /internal-transfer
 
 ### Account (3)
 - `account_profile` — GET /user
 - `account_balance` — GET /user/balance
-- `account_pix_keys` — GET /user/dict?key={key}
+- `account_pix_keys` — GET /user/dict?key={key} (DICT lookup of a third-party key before paying)
 
 ### Reports (11)
 - `reports_list_transactions` — GET /user/transactions
@@ -125,12 +125,15 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - `reports_deposit_pending_get` — GET /user/deposit-pending/{id}
 - `reports_summary` — GET /user/summary
 
-### Callbacks (5)
+### Callbacks (8)
 - `callbacks_list` — GET /user/callbacks
 - `callbacks_get` — GET /user/callbacks/{id}
 - `callbacks_resend` — POST /user/callbacks/resend/{transactionId}
 - `callbacks_resend_bulk` — POST /user/callbacks/resend
 - `callbacks_resend_webhook` — POST /user/callbacks/resend/webhook/{webhookId}
+- `callbacks_resend_webhook_bulk` — POST /user/callbacks/resend/webhook
+- `callbacks_create_secret` — POST /user/callbacks/secret
+- `callbacks_rotate_secret` — PATCH /user/callbacks/secret/rotate
 
 ### MED Infractions (5)
 - `infractions_list` — GET /user/infractions
@@ -139,12 +142,14 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - `infractions_list_defenses` — GET /user/infractions/{id}/defenses
 - `infractions_get_defense` — GET /user/infractions/{id}/defenses/{defenseId}
 
+¹ Disabled on the hosted server, for the reason above: they answer that the operation is not available there. They work in the local install.
+
 ## Conventions enforced
 
 - **Amounts always in BRL decimals** (`99.90`, not `9990`). Note the schema does NOT catch a unit mistake: `9990` is a valid amount and means R$ 9,990.00.
 - **`clientReference` required** on all create operations for idempotency.
-- **`callbackUrl` required** on creates so PayZu can notify when status changes.
-- **Auto-retry** on 5xx/429 with exponential backoff + jitter (3 attempts max).
+- **`callbackUrl` optional** on creates: pass it when you have an endpoint to be notified of status changes, or poll with the get tools.
+- **Auto-retry on reads only** (`GET`) on 408, 429, 500, 502, 503 and 504, with exponential backoff + jitter (3 attempts max). Creates are never retried.
 - **Errors include `errorCode` and `requestId`** — log them and send to support if you need to investigate.
 
 ## Custom base URL
@@ -158,7 +163,7 @@ If your account uses a custom Pix Processamento endpoint, override the default v
 }
 ```
 
-All 29 tools work identically against any compatible endpoint.
+All 48 tools work identically against any compatible endpoint.
 
 ## Links
 

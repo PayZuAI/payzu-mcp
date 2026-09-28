@@ -56,9 +56,18 @@ export function createHttp({ token, baseUrl }: HttpConfig): AxiosInstance {
   return http;
 }
 
+function errorBody(data: unknown): PayzuError | undefined {
+  if (!(data instanceof ArrayBuffer || Buffer.isBuffer(data))) return data as PayzuError | undefined;
+  try {
+    return JSON.parse(new TextDecoder().decode(data)) as PayzuError;
+  } catch {
+    return undefined;
+  }
+}
+
 export function formatError(err: unknown): string {
   if (axios.isAxiosError(err)) {
-    const data = err.response?.data as PayzuError | undefined;
+    const data = errorBody(err.response?.data);
     const status = err.response?.status ?? 'network';
     const message = data?.message ?? err.message;
     const details = [

@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AxiosInstance } from 'axios';
-import { ok, fail, docBase, registerCashOutUnavailable } from '../utils.js';
+import { ok, fail, docBase, registerCashOutUnavailable, toQuery } from '../utils.js';
+import { CallbackUrl, VirtualAccount } from '../schemas.js';
 
 const AccountNumber = z.string().regex(/^\d{6}$/);
 
@@ -31,8 +32,8 @@ export function registerInternalTransferTools(server: McpServer, http: AxiosInst
         payerAccountNumber: AccountNumber.optional().describe('AccountNumber de 6 dígitos do pagador (precisa pertencer à conta autenticada). Omita para resolver automaticamente.'),
         clientReference: z.string().min(1).max(64),
         description: z.string().max(500).optional(),
-        callbackUrl: z.string().url().optional(),
-        virtualAccount: z.string().min(1).max(50).optional().describe('Subconta virtual para correlacionar lojas ou filiais.'),
+        callbackUrl: CallbackUrl.optional(),
+        virtualAccount: VirtualAccount.optional(),
       },
     },
     async ({ payerAccountNumber, ...rest }) => {
@@ -51,16 +52,16 @@ export function registerInternalTransferTools(server: McpServer, http: AxiosInst
     'internal_transfer_get',
     {
       title: 'Consultar transferência interna',
-      description: `Consulta transferência interna por id OU clientReference. Doc: ${docBase}/endpoints/internal-transfer/get_internal_transfer`,
+      description: `Consulta transferência interna por id, clientReference ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater na mesma transferência. Doc: ${docBase}/endpoints/internal-transfer/get_internal_transfer`,
       inputSchema: {
         id: z.string().optional(),
-        clientReference: z.string().optional(),
+        clientReference: z.string().max(64).optional(),
+        virtualAccount: VirtualAccount.optional(),
       },
     },
     async (args) => {
       try {
-        const params = Object.fromEntries(Object.entries(args).filter(([, v]) => v != null));
-        const { data } = await http.get('/internal-transfer', { params });
+        const { data } = await http.get('/internal-transfer', { params: toQuery(args) });
         return ok(data);
       } catch (e) {
         return fail(e);
