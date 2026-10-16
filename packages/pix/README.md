@@ -1,4 +1,4 @@
-# payzu-mcp-pix
+# @payzu/mcp-pix
 
 MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Claude, Claude Code, Cursor, VS Code, Antigravity, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
 
@@ -30,7 +30,7 @@ Add to `claude_desktop_config.json` (`~/Library/Application Support/Claude/` on 
   "mcpServers": {
     "payzu-pix": {
       "command": "npx",
-      "args": ["-y", "payzu-mcp-pix"],
+      "args": ["-y", "@payzu/mcp-pix"],
       "env": {
         "PAYZU_TOKEN": "<your-bearer-token-from-dashboard>"
       }
@@ -48,7 +48,7 @@ Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
   "mcpServers": {
     "payzu-pix": {
       "command": "npx",
-      "args": ["-y", "payzu-mcp-pix"],
+      "args": ["-y", "@payzu/mcp-pix"],
       "env": { "PAYZU_TOKEN": "..." }
     }
   }
@@ -58,7 +58,7 @@ Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
 ### Claude Code
 
 ```bash
-claude mcp add payzu-pix --env PAYZU_TOKEN=<your-token> -- npx -y payzu-mcp-pix
+claude mcp add payzu-pix --env PAYZU_TOKEN=<your-token> -- npx -y @payzu/mcp-pix
 ```
 
 ## Configuration

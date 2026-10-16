@@ -15,7 +15,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "payzu-mcp-pix"
+        "@payzu/mcp-pix"
       ]
     }
   }

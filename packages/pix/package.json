@@ -1,5 +1,5 @@
 {
-  "name": "payzu-mcp-pix",
+  "name": "@payzu/mcp-pix",
   "version": "0.8.0",
   "description": "MCP server for PayZu Pix Processamento API. 48 tools: Pix charges, withdrawals, refunds, transfers, reports, webhooks, callbacks, MED infractions. Works with Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf.",
   "type": "module",
@@ -57,5 +57,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

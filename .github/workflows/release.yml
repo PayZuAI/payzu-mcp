@@ -23,13 +23,16 @@ jobs:
         run: npm install -g npm@latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
-      - name: Publish payzu-mcp-pix
+      - name: Publish @payzu/mcp-pix
         working-directory: packages/pix
+        env:
+          # First version of a new name is published with the token; later ones may use trusted publishing.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           LOCAL=$(node -p "require('./package.json').version")
-          PUBLISHED=$(npm view "payzu-mcp-pix@$LOCAL" version 2>/dev/null || true)
+          PUBLISHED=$(npm view "@payzu/mcp-pix@$LOCAL" version 2>/dev/null || true)
           if [ -n "$PUBLISHED" ]; then
-            echo "payzu-mcp-pix@$LOCAL ja publicado, pulando"
+            echo "@payzu/mcp-pix@$LOCAL ja publicado, pulando"
           else
             npm publish --access=public
           fi
