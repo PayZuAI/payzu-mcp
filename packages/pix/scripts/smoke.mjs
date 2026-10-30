@@ -55,12 +55,13 @@ const EXPECTED_TOOLS = [
   'reports_deposit_pending',
   'reports_deposit_pending_get',
   'reports_summary',
-  'account_pix_keys',
   'callbacks_resend_webhook',
   'callbacks_resend_webhook_bulk',
   'callbacks_create_secret',
   'callbacks_rotate_secret',
 ];
+
+const RETIRED_TOOLS = ['account_pix_keys'];
 
 function bail(message) {
   console.error(`SMOKE FALHOU: ${message}`);
@@ -138,6 +139,8 @@ async function main() {
   const list = await request('tools/list', {});
   if (list.error) bail(`tools/list retornou erro: ${JSON.stringify(list.error)}`);
   const names = (list.result?.tools ?? []).map((tool) => tool.name);
+  const retired = RETIRED_TOOLS.filter((name) => names.includes(name));
+  if (retired.length > 0) bail(`tools de rota removida ainda registradas: ${retired.join(', ')}`);
   if (names.length !== EXPECTED_TOOLS.length) {
     bail(`tools/list retornou ${names.length} tools, esperado ${EXPECTED_TOOLS.length}`);
   }
