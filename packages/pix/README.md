@@ -2,7 +2,7 @@
 
 MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Claude, Claude Code, Cursor, VS Code, Antigravity, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
 
-**48 tools** covering every operation of the public Pix API: charges, withdrawals, refunds, internal transfers, account info, reports, webhooks, callbacks and MED infractions. No admin endpoints exposed.
+**47 tools** covering every operation of the public Pix API: charges, withdrawals, refunds, internal transfers, account info, reports, webhooks, callbacks and MED infractions. No admin endpoints exposed.
 
 ## Hosted server (no install)
 
@@ -19,7 +19,7 @@ Authentication is OAuth: the browser asks for your API token once, and no creden
 
 The shared hosted server does not move money out of the account. Withdrawals, refunds and internal transfers (marked ¹ below) are disabled there, because a shared server has a single egress IP and that defeats the per-account IP whitelist that protects cash-out. Install locally to use them.
 
-## Local install (all 48 tools)
+## Local install (all 47 tools)
 
 ### Claude Desktop
 
@@ -107,10 +107,9 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - `internal_transfer_create` — POST /internal-transfer ¹
 - `internal_transfer_get` — GET /internal-transfer
 
-### Account (3)
+### Account (2)
 - `account_profile` — GET /user
 - `account_balance` — GET /user/balance
-- `account_pix_keys` — GET /user/dict?key={key} (DICT lookup of a third-party key before paying)
 
 ### Reports (11)
 - `reports_list_transactions` — GET /user/transactions
@@ -163,7 +162,7 @@ If your account uses a custom Pix Processamento endpoint, override the default v
 }
 ```
 
-All 48 tools work identically against any compatible endpoint.
+All 47 tools work identically against any compatible endpoint.
 
 ## Links
 

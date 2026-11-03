@@ -6,7 +6,7 @@ Model Context Protocol servers for the [PayZu APIs](https://docs.payzu.com.br). 
 
 | Package | API | Tools | Install |
 |---|---|---|---|
-| [`@payzu/mcp-pix`](packages/pix) | Pix Processamento | 48 | `npx -y @payzu/mcp-pix` |
+| [`@payzu/mcp-pix`](packages/pix) | Pix Processamento | 47 | `npx -y @payzu/mcp-pix` |
 
 ## Hosted server (no install)
 
