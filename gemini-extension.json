@@ -1,6 +1,6 @@
 {
   "name": "payzu-pix",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Opere sua conta PayZu Pix por IA: cobranças, saques, transferências, saldo, relatórios e infrações MED.",
   "settings": [
     {
