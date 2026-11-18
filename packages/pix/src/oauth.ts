@@ -335,7 +335,6 @@ function consentPage(params: Record<string, string>, clientName?: string, error?
       <div class="help">
         <div class="help-title">Onde encontro meu token?</div>
         <a class="help-row" href="https://web.payzu.processamento.com/credentials" target="_blank" rel="noopener"><span>Processamento</span><span class="help-go">Pegar token →</span></a>
-        <a class="help-row" href="https://hub.payzu.com.br/settings/tokens" target="_blank" rel="noopener"><span>Hub</span><span class="help-go">Pegar token →</span></a>
         <a class="help-tutorial" href="https://suporte.payzu.com.br/portal/pt-br/kb/articles/api-payzu-acessar-e-administrar-token-de-api-no-dashboard" target="_blank" rel="noopener">Ver o tutorial completo na central de ajuda</a>
       </div>
     </div>
