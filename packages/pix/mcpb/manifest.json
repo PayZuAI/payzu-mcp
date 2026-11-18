@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "payzu-mcp-pix",
   "display_name": "PayZu Pix",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Opere sua conta PayZu Pix por IA: cobranças, saques, transferências, estornos, relatórios e infrações MED.",
   "long_description": "Conecta sua conta PayZu Pix Processamento ao seu assistente de IA, rodando no seu computador. 47 ferramentas: criar e consultar cobranças Pix, estornar, sacar por chave Pix ou QR Code, transferir entre contas PayZu, saldo, extrato, depósitos pendentes, relatórios CSV, callbacks e segredo de callback, webhooks e defesa de infrações MED. Requer um token de API do painel (web.payzu.processamento.com/credentials).",
   "author": {
