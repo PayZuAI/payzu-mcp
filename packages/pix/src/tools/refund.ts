@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AxiosInstance } from 'axios';
-import { ok, fail, docBase, registerCashOutUnavailable } from '../utils.js';
+import { ok, fail, docBase, DESTRUCTIVE } from '../utils.js';
 
 const Amount = z
   .number()
@@ -12,15 +12,13 @@ const Amount = z
   );
 
 export function registerRefundTools(server: McpServer, http: AxiosInstance, enableCashOut = false) {
-  if (!enableCashOut) {
-    registerCashOutUnavailable(server, 'refund_create', 'Estornar cobrança');
-    return;
-  }
+  if (!enableCashOut) return;
 
   server.registerTool(
     'refund_create',
     {
       title: 'Estornar cobrança Pix',
+      annotations: DESTRUCTIVE,
       description: `Devolve ao pagador o valor de uma cobrança Pix já recebida. AÇÃO IRREVERSÍVEL: o dinheiro sai da conta e não volta. Confirme o valor e o transactionId com o usuário antes de chamar. Omita amount para estornar o valor cheio; informe amount para estorno parcial (pode haver mais de um, até o valor original). O processamento é assíncrono: a resposta traz a transação com refundStatus PENDING e a lista refunds (mais recente primeiro); a conclusão chega por webhook ou em nova consulta. Doc: ${docBase}/endpoints/refunds/post_refund`,
       inputSchema: {
         transactionId: z.string().min(1).describe('Id da transação de entrada que será estornada.'),

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AxiosInstance } from 'axios';
-import { ok, fail, docBase, registerCashOutUnavailable, toQuery } from '../utils.js';
+import { ok, fail, docBase, toQuery, DESTRUCTIVE, READ_ONLY } from '../utils.js';
 import { CallbackUrl, VirtualAccount } from '../schemas.js';
 
 const AccountNumber = z.string().regex(/^\d{6}$/);
@@ -17,14 +17,12 @@ async function resolvePayerAccountNumber(http: AxiosInstance, provided?: string)
 }
 
 export function registerInternalTransferTools(server: McpServer, http: AxiosInstance, enableCashOut = false) {
-  if (!enableCashOut) {
-    registerCashOutUnavailable(server, 'internal_transfer_create', 'Transferência interna');
-  }
   if (enableCashOut) {
   server.registerTool(
     'internal_transfer_create',
     {
       title: 'Transferência interna',
+      annotations: DESTRUCTIVE,
       description: `Transfere saldo entre contas PayZu por accountNumber (6 dígitos). Liquidação instantânea, sem passar pelo Pix tradicional. Se payerAccountNumber for omitido, usa a própria conta autenticada como pagadora. Doc: ${docBase}/endpoints/internal-transfer/post_internal_transfer`,
       inputSchema: {
         amount: z.number().positive().multipleOf(0.01).describe('Valor em REAIS decimais (BRL).'),
@@ -52,6 +50,7 @@ export function registerInternalTransferTools(server: McpServer, http: AxiosInst
     'internal_transfer_get',
     {
       title: 'Consultar transferência interna',
+      annotations: READ_ONLY,
       description: `Consulta transferência interna por id, clientReference ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater na mesma transferência. Doc: ${docBase}/endpoints/internal-transfer/get_internal_transfer`,
       inputSchema: {
         id: z.string().optional(),

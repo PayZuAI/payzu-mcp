@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { createHttp } from '../dist/client.js';
+import { createServer } from '../dist/server.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -63,6 +67,8 @@ const EXPECTED_TOOLS = [
 
 const RETIRED_TOOLS = ['account_pix_keys'];
 
+const CASH_OUT_TOOLS = ['withdraw_create', 'withdraw_by_qr', 'internal_transfer_create', 'refund_create'];
+
 function bail(message) {
   console.error(`SMOKE FALHOU: ${message}`);
   if (active.child) active.child.kill('SIGKILL');
@@ -121,6 +127,23 @@ function createClient() {
   return { child, request, notify };
 }
 
+async function listHostedTools() {
+  const http = createHttp({ token: 'dummy-token', baseUrl: 'http://127.0.0.1:9' });
+  const server = createServer(http, { enableCashOut: false });
+  const client = new Client({ name: 'payzu-smoke', version: '0.0.0' });
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+  const { tools } = await client.listTools();
+  await client.close();
+  return tools.map((tool) => tool.name);
+}
+
+function isAnnotated(tool) {
+  const hints = tool.annotations ?? {};
+  if (!tool.title || typeof hints.readOnlyHint !== 'boolean') return false;
+  return hints.readOnlyHint || typeof hints.destructiveHint === 'boolean';
+}
+
 async function main() {
   const timer = setTimeout(() => bail(`timeout de ${TIMEOUT_MS}ms excedido`), TIMEOUT_MS);
   const { child, request, notify } = createClient();
@@ -154,6 +177,22 @@ async function main() {
     bail(`divergência de tools. faltando: [${missing.join(', ')}] extras: [${extra.join(', ')}]`);
   }
 
+  const tools = list.result.tools;
+  const unannotated = tools.filter((tool) => !isAnnotated(tool)).map((tool) => tool.name);
+  if (unannotated.length > 0) bail(`tools sem title ou sem readOnlyHint/destructiveHint: ${unannotated.join(', ')}`);
+  const unguarded = CASH_OUT_TOOLS.filter(
+    (name) => tools.find((tool) => tool.name === name)?.annotations?.destructiveHint !== true,
+  );
+  if (unguarded.length > 0) bail(`tools que tiram dinheiro sem destructiveHint: ${unguarded.join(', ')}`);
+
+  const hostedNames = await listHostedTools();
+  const leaked = hostedNames.filter((name) => CASH_OUT_TOOLS.includes(name));
+  if (leaked.length > 0) bail(`servidor hospedado expõe tools que tiram dinheiro: ${leaked.join(', ')}`);
+  const expectedHosted = EXPECTED_TOOLS.filter((name) => !CASH_OUT_TOOLS.includes(name));
+  if (hostedNames.length !== expectedHosted.length) {
+    bail(`servidor hospedado retornou ${hostedNames.length} tools, esperado ${expectedHosted.length}`);
+  }
+
   const call = await request('tools/call', { name: 'account_balance', arguments: {} });
   if (call.error) bail(`tools/call retornou erro de protocolo: ${JSON.stringify(call.error)}`);
   if (call.result?.isError !== true) bail('account_balance com API inalcançável deveria retornar isError=true');
@@ -162,7 +201,7 @@ async function main() {
 
   clearTimeout(timer);
   child.kill('SIGTERM');
-  console.log(`SMOKE OK: ${names.length} tools válidas, versão ${reported}, erro limpo "${text}"`);
+  console.log(`SMOKE OK: ${names.length} tools anotadas (${hostedNames.length} no hospedado), versão ${reported}, erro limpo "${text}"`);
 }
 
 main().catch((err) => bail(err instanceof Error ? err.message : String(err)));

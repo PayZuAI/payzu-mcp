@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AxiosInstance } from 'axios';
-import { ok, fail, docBase, SECRET_ONCE } from '../utils.js';
+import { ok, fail, docBase, SECRET_ONCE, ADDITIVE, DESTRUCTIVE, READ_ONLY } from '../utils.js';
 import { WebhookEvent } from '../schemas.js';
 
 const Events = z
@@ -13,6 +13,7 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_create',
     {
       title: 'Cadastrar webhook',
+      annotations: ADDITIVE,
       description: `Cadastra uma URL HTTPS que recebe notificação quando a transação muda de estado. Use generateSecret para assinar as chamadas com HMAC, que é como o receptor confirma que a notificação veio da PayZu. Com generateSecret, a resposta traz o secret: ${SECRET_ONCE} Doc: ${docBase}/endpoints/webhooks/post_user_webhook`,
       inputSchema: {
         url: z.string().url().describe('URL HTTPS que vai receber os POSTs.'),
@@ -39,6 +40,7 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_list',
     {
       title: 'Listar webhooks',
+      annotations: READ_ONLY,
       description: `Lista os webhooks cadastrados na conta, com URL, eventos assinados e estado. Doc: ${docBase}/endpoints/webhooks/get_user_webhooks`,
       inputSchema: {
         active: z.boolean().optional().describe('Filtra só os ativos ou só os inativos.'),
@@ -60,6 +62,7 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_get',
     {
       title: 'Consultar webhook',
+      annotations: READ_ONLY,
       description: `Retorna um webhook pelo id. Doc: ${docBase}/endpoints/webhooks/get_user_webhook`,
       inputSchema: { id: z.string().min(1) },
     },
@@ -77,6 +80,7 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_update',
     {
       title: 'Alterar webhook',
+      annotations: DESTRUCTIVE,
       description: `Muda URL, eventos assinados ou o estado de um webhook. Desativar para de entregar notificação sem apagar o cadastro. Doc: ${docBase}/endpoints/webhooks/patch_user_webhook`,
       inputSchema: {
         id: z.string().min(1),
@@ -100,7 +104,8 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_delete',
     {
       title: 'Remover webhook',
-      description: `Apaga o cadastro do webhook. A conta PARA de receber notificação nessa URL. Se a intenção é só pausar, use webhooks_update com active false, que preserva o cadastro e o segredo. Confirme com o usuário antes de apagar. Doc: ${docBase}/endpoints/webhooks/delete_user_webhook`,
+      annotations: DESTRUCTIVE,
+      description: `Apaga o cadastro do webhook. A conta PARA de receber notificação nessa URL. Para só pausar, webhooks_update com active false preserva o cadastro e o segredo. Doc: ${docBase}/endpoints/webhooks/delete_user_webhook`,
       inputSchema: { id: z.string().min(1) },
     },
     async ({ id }) => {
@@ -117,7 +122,8 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_rotate_secret',
     {
       title: 'Rotacionar segredo do webhook',
-      description: `Gera um segredo HMAC novo para o webhook e invalida o anterior. QUEBRA a verificação de assinatura do receptor até ele passar a usar o segredo novo, então avise o usuário de que ele precisa atualizar o sistema dele. ${SECRET_ONCE} Doc: ${docBase}/endpoints/webhooks/post_user_webhook_rotate_secret`,
+      annotations: DESTRUCTIVE,
+      description: `Gera um segredo HMAC novo para o webhook e invalida o anterior. QUEBRA a verificação de assinatura do receptor até ele passar a usar o segredo novo. ${SECRET_ONCE} Doc: ${docBase}/endpoints/webhooks/post_user_webhook_rotate_secret`,
       inputSchema: { id: z.string().min(1) },
     },
     async ({ id }) => {
@@ -134,6 +140,7 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_sent_quantity',
     {
       title: 'Contar entregas de webhook',
+      annotations: READ_ONLY,
       description: `Quantidade de notificações enviadas, útil para saber se a entrega está acontecendo antes de investigar uma a uma. Doc: ${docBase}/endpoints/webhooks/get_user_webhooks_sent_quantity`,
       inputSchema: {
         webhookId: z.string().optional().describe('Restringe a contagem a um webhook.'),
@@ -155,6 +162,7 @@ export function registerWebhookTools(server: McpServer, http: AxiosInstance) {
     'webhooks_sent_detail',
     {
       title: 'Detalhe de uma entrega',
+      annotations: READ_ONLY,
       description: `Mostra o que foi enviado e o que o receptor respondeu numa entrega específica. É por aqui que se descobre por que uma notificação não chegou. Doc: ${docBase}/endpoints/webhooks/get_user_webhook_sent_detail`,
       inputSchema: {
         id: z.string().min(1).describe('Id do webhook.'),

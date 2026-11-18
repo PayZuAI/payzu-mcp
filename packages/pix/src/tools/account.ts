@@ -1,12 +1,13 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AxiosInstance } from 'axios';
-import { ok, fail, docBase } from '../utils.js';
+import { ok, fail, docBase, READ_ONLY } from '../utils.js';
 
 export function registerAccountTools(server: McpServer, http: AxiosInstance) {
   server.registerTool(
     'account_profile',
     {
       title: 'Perfil da conta',
+      annotations: READ_ONLY,
       description: `Retorna o perfil, as permissões, os limites e as regras de tarifa da conta autenticada. Doc: ${docBase}/endpoints/account/get_user`,
       inputSchema: {},
     },
@@ -25,6 +26,7 @@ export function registerAccountTools(server: McpServer, http: AxiosInstance) {
     'account_balance',
     {
       title: 'Saldo da conta',
+      annotations: READ_ONLY,
       description: `Retorna o saldo disponível e o saldo bloqueado da conta autenticada. Doc: ${docBase}/endpoints/account/get_user_balance`,
       inputSchema: {},
     },

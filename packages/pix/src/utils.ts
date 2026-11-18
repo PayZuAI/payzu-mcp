@@ -1,4 +1,4 @@
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js';
 import { formatError } from './client.js';
 
 function stripHeavy(value: unknown, fields: readonly string[]): unknown {
@@ -59,27 +59,10 @@ export function fail(err: unknown) {
 
 export const docBase = 'https://docs.payzu.com.br/docs/pix-processamento';
 
-export const SECRET_ONCE = 'O segredo aparece só nesta resposta e não existe rota para lê-lo de novo: entregue ao usuário para guardar em local seguro e não o repita depois.';
+export const SECRET_ONCE = 'O segredo aparece só nesta resposta; não existe rota para lê-lo de novo.';
 
-const CASHOUT_UNAVAILABLE = [
-  'Esta operação (que movimenta dinheiro para fora da conta) NÃO está disponível neste conector hospedado.',
-  'Motivo: por segurança, o saque depende da lista de IPs autorizados da conta, e este servidor é compartilhado — então o controle de IP não se aplica aqui.',
-  '',
-  'Como o cliente pode sacar/transferir:',
-  '1. Aplicativo local do PayZu no Claude Desktop — baixe payzu-mcp-pix.mcpb em https://github.com/PayZuAI/payzu-mcp/releases/latest e abra o arquivo. Ele roda no computador do cliente, saindo do IP dele, onde a lista de IPs funciona normalmente.',
-  '2. Ou diretamente pelo painel: https://web.payzu.processamento.com (Processamento) ou https://hub.payzu.com.br (Hub).',
-  '',
-  'Explique isso ao cliente de forma simples e ofereça as duas opções. Não tente contornar chamando outra ferramenta.',
-].join('\n');
+export const READ_ONLY: ToolAnnotations = { readOnlyHint: true };
 
-export function registerCashOutUnavailable(server: McpServer, name: string, title: string) {
-  server.registerTool(
-    name,
-    {
-      title: `${title} (indisponível aqui)`,
-      description: `INDISPONÍVEL neste servidor hospedado. ${CASHOUT_UNAVAILABLE}`,
-      inputSchema: {},
-    },
-    async () => ({ content: [{ type: 'text' as const, text: CASHOUT_UNAVAILABLE }] }),
-  );
-}
+export const ADDITIVE: ToolAnnotations = { readOnlyHint: false, destructiveHint: false };
+
+export const DESTRUCTIVE: ToolAnnotations = { readOnlyHint: false, destructiveHint: true };
