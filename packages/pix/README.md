@@ -67,12 +67,12 @@ claude mcp add payzu-pix --env PAYZU_TOKEN=<your-token> -- npx -y @payzu/mcp-pix
 
 | Env var | Required | Default | Description |
 |---|---|---|---|
-| `PAYZU_TOKEN` | yes | — | Bearer token from the dashboard: [Processamento](https://web.payzu.processamento.com/credentials) or [Hub](https://hub.payzu.com.br/settings/tokens) |
+| `PAYZU_TOKEN` | yes | — | Bearer token from the [dashboard](https://web.payzu.processamento.com/credentials) |
 | `PAYZU_API_URL` | no | `https://api.payzu.processamento.com/v1` | Override for whitelabel tenants |
 
 ## Revoking access
 
-The hosted server issues stateless OAuth tokens that wrap your API token, so there is no server-side session to delete. To cut off a connected client, rotate your API token in the dashboard ([Processamento](https://web.payzu.processamento.com/credentials) / [Hub](https://hub.payzu.com.br/settings/tokens)) — every issued token stops working at the API on the next call.
+The hosted server issues stateless OAuth tokens that wrap your API token, so there is no server-side session to delete. To cut off a connected client, rotate your API token in the [dashboard](https://web.payzu.processamento.com/credentials) — every issued token stops working at the API on the next call.
 
 ## Tools
 
