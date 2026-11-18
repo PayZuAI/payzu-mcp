@@ -18,7 +18,8 @@
     "start": "node dist/index.js",
     "test:smoke": "node scripts/smoke.mjs",
     "dev:remote": "tsx watch --clear-screen=false src/remote.ts",
-    "start:remote": "node dist/remote.js"
+    "start:remote": "node dist/remote.js",
+    "pack:mcpb": "node scripts/pack-mcpb.mjs"
   },
   "keywords": [
     "mcp",
@@ -50,6 +51,8 @@
     "express": "^4.21.2"
   },
   "devDependencies": {
+    "@anthropic-ai/mcpb": "^2.1.2",
+    "esbuild": "^0.28.0",
     "@types/node": "^24.10.1",
     "tsx": "^4.21.0",
     "typescript": "^5.6.3",
