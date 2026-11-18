@@ -23,6 +23,11 @@ jobs:
         run: npm install -g npm@latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
+      - name: package.json sem correção automática do npm
+        working-directory: packages/pix
+        run: |
+          npm pkg fix
+          git diff --exit-code package.json
       - name: Publish @payzu/mcp-pix
         working-directory: packages/pix
         env:
