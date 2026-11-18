@@ -17,7 +17,9 @@ Authentication is OAuth: the browser asks for your API token once, and no creden
 - **Cursor** — [install](https://cursor.com/en/install-mcp?name=payzu-pix&config=eyJ1cmwiOiJodHRwczovL21jcC5wYXl6dS5jb20uYnIvbWNwIn0=)
 - **VS Code** — [install](https://insiders.vscode.dev/redirect/mcp/install?name=payzu-pix&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fmcp.payzu.com.br%2Fmcp%22%7D)
 
-The shared hosted server does not move money out of the account. Withdrawals, refunds and internal transfers (marked ¹ below) are disabled there, because a shared server has a single egress IP and that defeats the per-account IP whitelist that protects cash-out. Install locally to use them.
+The shared hosted server exposes 43 tools and does not move money out of the account. Withdrawals, refunds and internal transfers (marked ¹ below) are not registered there, because a shared server has a single egress IP and that defeats the per-account IP whitelist that protects cash-out. Install locally to use them.
+
+Every tool declares a `title` and `readOnlyHint` or `destructiveHint`, so clients can tell reads from writes.
 
 ## Local install (all 47 tools)
 

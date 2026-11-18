@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AxiosInstance } from 'axios';
-import { ok, fail, docBase, toQuery } from '../utils.js';
+import { ok, fail, docBase, toQuery, ADDITIVE, READ_ONLY } from '../utils.js';
 import { Document, Limit, Page, SortDirection, TxStatus, TxType, VirtualAccount } from '../schemas.js';
 
 const ReportStatus = z.enum(['PENDING', 'RUNNING', 'COMPLETED', 'FAILED']);
@@ -12,6 +12,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_list_transactions',
     {
       title: 'Listar transações',
+      annotations: READ_ONLY,
       description: `Lista paginada das transações da conta (retorna total e pages). Filtros por status, tipo, método, período, valor, documento, nome, endToEndId, clientReference, virtualAccount e presença de QR Code. Doc: ${docBase}/endpoints/reports/get_user_transactions`,
       inputSchema: {
         status: z.array(TxStatus).optional(),
@@ -47,6 +48,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_get_transaction',
     {
       title: 'Consultar transação',
+      annotations: READ_ONLY,
       description: `Retorna uma transação específica com logs de callback e infrações vinculadas. Doc: ${docBase}/endpoints/reports/get_user_transaction_by_id`,
       inputSchema: {
         id: z.string().min(1),
@@ -66,6 +68,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_create_csv',
     {
       title: 'Gerar relatório CSV',
+      annotations: ADDITIVE,
       description: `Cria um job assíncrono que gera CSV de transações para o período/filtros. Use para janelas grandes (mês, ano). Acompanhe via reports_get_job. Doc: ${docBase}/endpoints/reports/post_user_report`,
       inputSchema: {
         dateFrom: z.string().describe('ISO 8601'),
@@ -88,6 +91,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_list_jobs',
     {
       title: 'Listar relatórios',
+      annotations: READ_ONLY,
       description: `Lista paginada dos jobs de relatório criados pela conta autenticada, com filtro por status e período. Doc: ${docBase}/endpoints/reports/list_user_reports`,
       inputSchema: {
         status: z.array(ReportStatus).optional(),
@@ -115,6 +119,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_get_job',
     {
       title: 'Consultar relatório',
+      annotations: READ_ONLY,
       description: `Retorna o status de um job de relatório (PENDING, RUNNING, COMPLETED, FAILED). Doc: ${docBase}/endpoints/reports/get_user_report`,
       inputSchema: {
         id: z.string().min(1),
@@ -134,6 +139,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_download',
     {
       title: 'Baixar relatório',
+      annotations: READ_ONLY,
       description: `Retorna URL assinada (validade curta) para download do CSV. Só funciona com o job em COMPLETED; arquivo expirado não volta, gere outro. Doc: ${docBase}/endpoints/reports/download_user_report`,
       inputSchema: {
         id: z.string().min(1),
@@ -153,6 +159,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_bank_statements',
     {
       title: 'Extrato bancário',
+      annotations: READ_ONLY,
       description: `Extrato da conta na janela pedida, linha a linha, com operação, motivo e saldo antes e depois de cada lançamento. Diferente de reports_list_transactions, que lista transações Pix: aqui aparece TODO movimento de saldo, tarifa e ajuste inclusive. Doc: ${docBase}/endpoints/reports/get_user_bank_statements`,
       inputSchema: {
         createdAtFrom: z.string().describe('Início da janela, ISO 8601. Obrigatório.'),
@@ -183,6 +190,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_bank_statement',
     {
       title: 'Lançamento do extrato',
+      annotations: READ_ONLY,
       description: `Detalhe de um lançamento do extrato pelo id. Doc: ${docBase}/endpoints/reports/get_user_bank_statement`,
       inputSchema: { id: z.string().min(1) },
     },
@@ -200,6 +208,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_deposit_pending',
     {
       title: 'Depósitos pendentes',
+      annotations: READ_ONLY,
       description: `Depósitos que chegaram mas ainda não foram conciliados com uma cobrança. É onde se procura o Pix que o cliente diz ter pago e não apareceu. Doc: ${docBase}/endpoints/reports/get_user_deposit_pending`,
       inputSchema: {
         status: z.array(DepositPendingStatus).optional(),
@@ -228,6 +237,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_deposit_pending_get',
     {
       title: 'Depósito pendente',
+      annotations: READ_ONLY,
       description: `Detalhe de um depósito pendente pelo id. Doc: ${docBase}/endpoints/reports/get_user_deposit_pending_by_id`,
       inputSchema: { id: z.string().min(1) },
     },
@@ -245,6 +255,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     'reports_summary',
     {
       title: 'Resumo da conta',
+      annotations: READ_ONLY,
       description: `Totais consolidados do período para depósitos, saques, comissões e ajustes, com contagem e valor por status. Responde "quanto entrou este mês" sem baixar a lista inteira de transações. Sem datas, cobre do início do dia anterior (horário de Brasília) até agora. Doc: ${docBase}/endpoints/reports/get_user_summary`,
       inputSchema: {
         dateFrom: z.string().optional().describe('Início do período, ISO 8601.'),
