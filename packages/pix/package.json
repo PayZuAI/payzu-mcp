@@ -1,6 +1,6 @@
 {
   "name": "@payzu/mcp-pix",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "MCP server for PayZu Pix Processamento API. 47 tools: Pix charges, withdrawals, refunds, transfers, reports, webhooks, callbacks, MED infractions. Works with Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf.",
   "type": "module",
   "bin": {
@@ -18,7 +18,8 @@
     "start": "node dist/index.js",
     "test:smoke": "node scripts/smoke.mjs",
     "dev:remote": "tsx watch --clear-screen=false src/remote.ts",
-    "start:remote": "node dist/remote.js"
+    "start:remote": "node dist/remote.js",
+    "pack:mcpb": "node scripts/pack-mcpb.mjs"
   },
   "keywords": [
     "mcp",
@@ -46,10 +47,12 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "axios": "^1.13.2",
     "envalid": "^8.1.1",
-    "zod": "^4.1.13",
+    "zod": "^4.6.6",
     "express": "^4.21.2"
   },
   "devDependencies": {
+    "esbuild": "^0.28.0",
+    "fflate": "^0.8.3",
     "@types/node": "^24.10.1",
     "tsx": "^4.21.0",
     "typescript": "^5.6.3",
