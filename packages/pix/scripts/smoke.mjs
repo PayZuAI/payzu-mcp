@@ -186,11 +186,11 @@ async function main() {
   if (unguarded.length > 0) bail(`tools que tiram dinheiro sem destructiveHint: ${unguarded.join(', ')}`);
 
   const hostedNames = await listHostedTools();
-  const leaked = hostedNames.filter((name) => CASH_OUT_TOOLS.includes(name));
-  if (leaked.length > 0) bail(`servidor hospedado expõe tools que tiram dinheiro: ${leaked.join(', ')}`);
   const expectedHosted = EXPECTED_TOOLS.filter((name) => !CASH_OUT_TOOLS.includes(name));
-  if (hostedNames.length !== expectedHosted.length) {
-    bail(`servidor hospedado retornou ${hostedNames.length} tools, esperado ${expectedHosted.length}`);
+  const hostedMissing = expectedHosted.filter((name) => !hostedNames.includes(name));
+  const hostedExtra = hostedNames.filter((name) => !expectedHosted.includes(name));
+  if (hostedMissing.length > 0 || hostedExtra.length > 0) {
+    bail(`divergência no hospedado. faltando: [${hostedMissing.join(', ')}] extras: [${hostedExtra.join(', ')}]`);
   }
 
   const call = await request('tools/call', { name: 'account_balance', arguments: {} });

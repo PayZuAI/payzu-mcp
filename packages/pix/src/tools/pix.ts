@@ -16,7 +16,7 @@ export function registerPixTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Criar cobrança Pix',
       annotations: ADDITIVE,
-      description: `Cria uma cobrança Pix dinâmica e retorna QR Code + ID. Repetir o mesmo clientReference devolve a cobrança já criada (idempotência). Sem callbackUrl, nenhuma notificação é enviada. Doc: ${docBase}/endpoints/pix-operations/post_pix`,
+      description: `Cria uma cobrança Pix dinâmica e retorna QR Code + ID. Repetir o mesmo clientReference devolve a cobrança já criada (idempotência). Doc: ${docBase}/endpoints/pix-operations/post_pix`,
       inputSchema: {
         amount: Amount,
         clientReference: z.string().min(1).max(64).describe('Identificador externo único e determinístico (ex: order-123 ou UUID v4).'),

@@ -41,4 +41,4 @@ export const CallbackUrl = z
   .string()
   .url()
   .regex(/^https?:\/\//)
-  .describe('Opcional: URL http(s) que recebe um POST quando o status muda. Se omitir, nenhum callback é enviado; consulte o status depois com a tool de consulta.');
+  .describe('Opcional: URL http(s) que recebe um POST quando o status muda. Sem ela, nenhum callback é enviado.');
