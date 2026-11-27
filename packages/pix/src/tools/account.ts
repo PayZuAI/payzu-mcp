@@ -8,7 +8,7 @@ export function registerAccountTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Perfil da conta',
       annotations: READ_ONLY,
-      description: `Retorna o perfil, as permissões, os limites e as regras de tarifa da conta autenticada. Doc: ${docBase}/endpoints/account/get_user`,
+      description: `Retorna o perfil, as permissões, os limites e as regras de tarifa da conta autenticada. Doc: ${docBase}/get-user`,
       inputSchema: {},
     },
     async () => {
@@ -27,7 +27,7 @@ export function registerAccountTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Saldo da conta',
       annotations: READ_ONLY,
-      description: `Retorna o saldo disponível e o saldo bloqueado da conta autenticada. Doc: ${docBase}/endpoints/account/get_user_balance`,
+      description: `Retorna o saldo disponível e o saldo bloqueado da conta autenticada. Doc: ${docBase}/get-user-balance`,
       inputSchema: {},
     },
     async () => {

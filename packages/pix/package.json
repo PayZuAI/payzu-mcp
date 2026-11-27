@@ -1,6 +1,6 @@
 {
   "name": "@payzu/mcp-pix",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "MCP server for PayZu Pix Processamento API. 47 tools: Pix charges, withdrawals, refunds, transfers, reports, webhooks, callbacks, MED infractions. Works with Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf.",
   "type": "module",
   "bin": {
@@ -36,7 +36,7 @@
     "gemini",
     "ai-tools"
   ],
-  "homepage": "https://docs.payzu.com.br/docs/pix-processamento",
+  "homepage": "https://docs.payzu.com.br/docs/pix/about",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PayZuAI/payzu-mcp.git",

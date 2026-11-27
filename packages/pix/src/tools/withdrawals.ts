@@ -15,7 +15,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     {
       title: 'Criar saque',
       annotations: DESTRUCTIVE,
-      description: `Cria um saque (cash out) para uma chave Pix. Saldo é debitado antes do envio. Se falhar, valor é estornado e status vira CANCELED. Repetir o mesmo clientReference com mesmo valor e chave devolve o saque já criado; com dados diferentes é recusado. Doc: ${docBase}/endpoints/withdrawals/post_withdraw`,
+      description: `Cria um saque (cash out) para uma chave Pix. Saldo é debitado antes do envio. Se falhar, valor é estornado e status vira CANCELED. Repetir o mesmo clientReference com mesmo valor e chave devolve o saque já criado; com dados diferentes é recusado. Doc: ${docBase}/post-withdraw`,
       inputSchema: {
         amount: Amount,
         pixKey: z.string().min(1).describe('Chave Pix do destinatário no formato do pixType: CPF ou CNPJ só dígitos, telefone +55 com DDD (ex: +5511999998888), e-mail ou chave aleatória (EVP).'),
@@ -42,7 +42,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     {
       title: 'Consultar saque',
       annotations: READ_ONLY,
-      description: `Consulta um saque por id, clientReference, endToEndId ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater no mesmo saque. Doc: ${docBase}/endpoints/withdrawals/get_withdraw`,
+      description: `Consulta um saque por id, clientReference, endToEndId ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater no mesmo saque. Doc: ${docBase}/get-withdraw`,
       inputSchema: {
         id: z.string().optional(),
         clientReference: z.string().max(64).optional(),
@@ -66,7 +66,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     {
       title: 'Pagar QR Code (saque)',
       annotations: DESTRUCTIVE,
-      description: `Paga um QR Code Pix estático ou dinâmico. Se o QR já trouxer valor embutido, amount pode ser omitido. Leia o QR antes com withdraw_read_qr e confirme recebedor e valor com o usuário. Doc: ${docBase}/endpoints/withdrawals/post_withdraw_qrcode`,
+      description: `Paga um QR Code Pix estático ou dinâmico. Se o QR já trouxer valor embutido, amount pode ser omitido. Leia o QR antes com withdraw_read_qr e confirme recebedor e valor com o usuário. Doc: ${docBase}/post-withdraw-qrcode`,
       inputSchema: {
         qrCode: z.string().min(1).describe('Conteúdo do QR Code Pix (copia-e-cola EMV).'),
         amount: z.number().min(0.1).multipleOf(0.01).optional().describe('Valor em REAIS decimais (BRL), mínimo 0.10. Só se o QR não embutir valor.'),
@@ -92,7 +92,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     {
       title: 'Ler QR Code',
       annotations: READ_ONLY,
-      description: `Decodifica um QR Code Pix (formato EMV, estático ou dinâmico) e retorna recebedor, valor (se presente) e metadados, sem pagar nada. Doc: ${docBase}/endpoints/keys-and-dict/post_pix_qrcode_read`,
+      description: `Decodifica um QR Code Pix (formato EMV, estático ou dinâmico) e retorna recebedor, valor (se presente) e metadados, sem pagar nada. Doc: ${docBase}/post-pix-qrcode-read`,
       inputSchema: {
         qrCode: z.string().min(1).describe('Conteúdo bruto do QR Code copia-e-cola.'),
       },
@@ -112,7 +112,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     {
       title: 'Consultar chave Pix (DICT)',
       annotations: READ_ONLY,
-      description: `Consulta no DICT (diretório do Bacen) o titular de uma chave Pix de terceiro: nome, documento, agência, conta e instituição. Aceita token com permissão DEPOSIT ou WITHDRAW. Doc: ${docBase}/endpoints/keys-and-dict/get_pix_key`,
+      description: `Consulta no DICT (diretório do Bacen) o titular de uma chave Pix de terceiro: nome, documento, agência, conta e instituição. Aceita token com permissão DEPOSIT ou WITHDRAW. Doc: ${docBase}/get-pix-key`,
       inputSchema: {
         key: z.string().min(1).max(77).describe('Chave Pix a consultar: CPF, CNPJ, telefone +55 com DDD, e-mail ou EVP.'),
       },
@@ -132,7 +132,7 @@ export function registerWithdrawalTools(server: McpServer, http: AxiosInstance, 
     {
       title: 'Comprovante de saque',
       annotations: READ_ONLY,
-      description: `Retorna o comprovante de um saque em PDF, como data URI base64 no campo base64. Doc: ${docBase}/endpoints/withdrawals/get_withdraw_proof`,
+      description: `Retorna o comprovante de um saque em PDF, como data URI base64 no campo base64. Doc: ${docBase}/get-withdraw-proof`,
       inputSchema: {
         id: z.string().min(1).describe('ID do saque.'),
       },
