@@ -1,6 +1,6 @@
 # @payzu/mcp-pix
 
-MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix-processamento) API. Plugs into Claude, Claude Code, Cursor, VS Code, Antigravity, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
+MCP server for the [PayZu Pix Processamento](https://docs.payzu.com.br/docs/pix/about) API. Plugs into Claude, Claude Code, Cursor, VS Code, Antigravity, Windsurf, and any other MCP-compatible AI client to let the assistant call PayZu's Pix API directly with typed tools.
 
 **47 tools** covering every operation of the public Pix API: charges, withdrawals, refunds, internal transfers, account info, reports, webhooks, callbacks and MED infractions. No admin endpoints exposed.
 
@@ -67,16 +67,16 @@ claude mcp add payzu-pix --env PAYZU_TOKEN=<your-token> -- npx -y @payzu/mcp-pix
 
 | Env var | Required | Default | Description |
 |---|---|---|---|
-| `PAYZU_TOKEN` | yes | — | Bearer token from the [dashboard](https://web.payzu.processamento.com/credentials) |
-| `PAYZU_API_URL` | no | `https://api.payzu.processamento.com/v1` | Override for whitelabel tenants |
+| `PAYZU_TOKEN` | yes | — | Bearer token from the [dashboard](https://web.payzu.com.br/developers/credentials) |
+| `PAYZU_API_URL` | no | `https://api.pix.payzu.com.br/v1` | Set `https://pix.sandbox.payzu.dev/v1` to use the [sandbox](https://docs.payzu.com.br/docs/pix/environments) |
 
 ## Revoking access
 
-The hosted server issues stateless OAuth tokens that wrap your API token, so there is no server-side session to delete. To cut off a connected client, rotate your API token in the [dashboard](https://web.payzu.processamento.com/credentials) — every issued token stops working at the API on the next call.
+The hosted server issues stateless OAuth tokens that wrap your API token, so there is no server-side session to delete. To cut off a connected client, rotate your API token in the [dashboard](https://web.payzu.com.br/developers/credentials) — every issued token stops working at the API on the next call.
 
 ## Tools
 
-Each tool description links to the corresponding endpoint page in [docs.payzu.com.br](https://docs.payzu.com.br/docs/pix-processamento).
+Each tool description links to the corresponding endpoint page in [docs.payzu.com.br](https://docs.payzu.com.br/docs/pix/about).
 
 ### Pix charges (4)
 - `pix_create` — POST /pix
@@ -153,26 +153,26 @@ Each tool description links to the corresponding endpoint page in [docs.payzu.co
 - **Auto-retry on reads only** (`GET`) on 408, 429, 500, 502, 503 and 504, with exponential backoff + jitter (3 attempts max). Creates are never retried.
 - **Errors include `errorCode` and `requestId`** — log them and send to support if you need to investigate.
 
-## Custom base URL
+## Sandbox
 
-If your account uses a custom Pix Processamento endpoint, override the default via env:
+Point the server at the [sandbox](https://docs.payzu.com.br/docs/pix/environments) with a sandbox token:
 
 ```json
 "env": {
-  "PAYZU_TOKEN": "<your-token>",
-  "PAYZU_API_URL": "https://api.example.processamento.com/v1"
+  "PAYZU_TOKEN": "<your-sandbox-token>",
+  "PAYZU_API_URL": "https://pix.sandbox.payzu.dev/v1"
 }
 ```
 
-All 47 tools work identically against any compatible endpoint.
+All 47 tools work the same in the sandbox, because the routes are the same as in production.
 
 ## Links
 
 - Hosted server: https://mcp.payzu.com.br/mcp
-- MCP guide: https://docs.payzu.com.br/docs/pix-processamento/mcp
-- Documentation: https://docs.payzu.com.br/docs/pix-processamento
-- OpenAPI: https://docs.payzu.com.br/openapi.json
-- llms-full.txt: https://docs.payzu.com.br/pix-processamento/llms-full.txt
+- MCP guide: https://docs.payzu.com.br/docs/getting-started/mcp-server
+- Documentation: https://docs.payzu.com.br/docs/pix/about
+- OpenAPI: https://docs.payzu.com.br/openapi/pix.json
+- llms-full.txt: https://docs.payzu.com.br/pix/llms-full.txt
 - Issues: https://github.com/PayZuAI/payzu-mcp/issues
 - Pix SDKs: [`payzu-pix` on npm](https://www.npmjs.com/package/payzu-pix), [`payzu-pix` on PyPI](https://pypi.org/project/payzu-pix/)
 

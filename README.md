@@ -52,14 +52,14 @@ Restart Claude Desktop. Test by asking _"qual meu saldo PayZu?"_ — Claude will
 - **Errors include `errorCode` and `requestId`** propagated from the API.
 - **Zero admin endpoints** exposed — only public/user-facing API surface.
 
-## Custom base URL
+## Sandbox
 
-Override the default base URL via env (useful if your account uses a custom endpoint):
+Point the server at the [sandbox](https://docs.payzu.com.br/docs/pix/environments) with a sandbox token:
 
 ```json
 "env": {
-  "PAYZU_TOKEN": "<your-token>",
-  "PAYZU_API_URL": "https://api.example.processamento.com/v1"
+  "PAYZU_TOKEN": "<your-sandbox-token>",
+  "PAYZU_API_URL": "https://pix.sandbox.payzu.dev/v1"
 }
 ```
 

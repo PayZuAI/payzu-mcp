@@ -36,7 +36,7 @@ function unseal(key: Buffer, sealed: string): Record<string, unknown> | undefine
   }
 }
 
-const MCP_HOST = /^mcp\.payzu\.(com\.br|processamento\.(com|io))$/;
+const MCP_HOST = /^mcp\.payzu\.com\.br$/;
 
 export function requestPublicUrl(req: express.Request, fallback: string): string {
   const host = req.get('host');
@@ -334,7 +334,7 @@ function consentPage(params: Record<string, string>, clientName?: string, error?
       </form>
       <div class="help">
         <div class="help-title">Onde encontro meu token?</div>
-        <a class="help-row" href="https://web.payzu.processamento.com/credentials" target="_blank" rel="noopener"><span>Processamento</span><span class="help-go">Pegar token →</span></a>
+        <a class="help-row" href="https://web.payzu.com.br/developers/credentials" target="_blank" rel="noopener"><span>Processamento</span><span class="help-go">Pegar token →</span></a>
         <a class="help-tutorial" href="https://suporte.payzu.com.br/portal/pt-br/kb/articles/api-payzu-acessar-e-administrar-token-de-api-no-dashboard" target="_blank" rel="noopener">Ver o tutorial completo na central de ajuda</a>
       </div>
     </div>
@@ -416,7 +416,7 @@ export function createOauthRouter(config: OauthConfig): express.Router {
     res.json({
       resource: base,
       resource_name: 'PayZu',
-      resource_documentation: 'https://docs.payzu.com.br/docs/pix-processamento/mcp',
+      resource_documentation: 'https://docs.payzu.com.br/docs/getting-started/mcp-server',
       authorization_servers: [base],
       bearer_methods_supported: ['header'],
     });

@@ -57,7 +57,7 @@ export function fail(err: unknown) {
   };
 }
 
-export const docBase = 'https://docs.payzu.com.br/docs/pix-processamento';
+export const docBase = 'https://docs.payzu.com.br/api';
 
 export const SECRET_ONCE = 'O segredo aparece só nesta resposta; não existe rota para lê-lo de novo.';
 

@@ -12,7 +12,7 @@ import { VERSION } from './version.js';
 const env = cleanEnv(process.env, {
   PORT: port({ default: 8080 }),
   PAYZU_API_URL: url({
-    default: 'https://api.payzu.processamento.com/v1',
+    default: 'https://api.pix.payzu.com.br/v1',
     desc: 'Base URL of the Pix Processamento API',
   }),
   MCP_PUBLIC_URL: url({
@@ -101,7 +101,7 @@ app.post('/mcp', express.json({ limit: '2mb' }), async (req, res) => {
         jsonrpc: '2.0',
         error: {
           code: -32001,
-          message: 'Missing or invalid credentials. Authenticate via OAuth or send "Authorization: Bearer <PAYZU_TOKEN>" (create one in the dashboard: https://web.payzu.processamento.com/credentials).',
+          message: 'Missing or invalid credentials. Authenticate via OAuth or send "Authorization: Bearer <PAYZU_TOKEN>" (create one in the dashboard: https://web.payzu.com.br/developers/credentials).',
         },
         id: null,
       });

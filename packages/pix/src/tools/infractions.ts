@@ -47,7 +47,7 @@ export function registerInfractionsTools(server: McpServer, http: AxiosInstance)
     {
       title: 'Listar infrações (MED)',
       annotations: READ_ONLY,
-      description: `Lista paginada das infrações MED (Mecanismo Especial de Devolução do Bacen) da conta autenticada, com filtros por status, tipo, transação, valor, participante e datas (expiresAt é o prazo de defesa). Doc: ${docBase}/endpoints/infractions/get_infractions`,
+      description: `Lista paginada das infrações MED (Mecanismo Especial de Devolução do Bacen) da conta autenticada, com filtros por status, tipo, transação, valor, participante e datas (expiresAt é o prazo de defesa). Doc: ${docBase}/get-infractions`,
       inputSchema: {
         status: z.array(InfractionStatus).optional(),
         type: z.array(InfractionType).optional(),
@@ -90,7 +90,7 @@ export function registerInfractionsTools(server: McpServer, http: AxiosInstance)
     {
       title: 'Consultar infração',
       annotations: READ_ONLY,
-      description: `Detalhe completo de uma infração: tipo, status, relato, prazo de defesa (expiresAt), resultado da análise, transação relacionada e histórico de defesas. Doc: ${docBase}/endpoints/infractions/get_infractions_by_id`,
+      description: `Detalhe completo de uma infração: tipo, status, relato, prazo de defesa (expiresAt), resultado da análise, transação relacionada e histórico de defesas. Doc: ${docBase}/get-infractions-by-id`,
       inputSchema: {
         id: z.string(),
       },
@@ -110,7 +110,7 @@ export function registerInfractionsTools(server: McpServer, http: AxiosInstance)
     {
       title: 'Enviar defesa de infração',
       annotations: DESTRUCTIVE,
-      description: `Submete defesa contra uma infração aberta, com texto (máx 1000 caracteres) e anexos (notas fiscais, comprovantes; até 5 arquivos e 10MB no total, extensões executáveis recusadas). Ação irreversível: a defesa enviada não pode ser desfeita. Doc: ${docBase}/endpoints/infractions/post_infractions_defense`,
+      description: `Submete defesa contra uma infração aberta, com texto (máx 1000 caracteres) e anexos (notas fiscais, comprovantes; até 5 arquivos e 10MB no total, extensões executáveis recusadas). Ação irreversível: a defesa enviada não pode ser desfeita. Doc: ${docBase}/post-infractions-defense`,
       inputSchema: {
         id: z.string().describe('ID da infração.'),
         defense: z.string().min(1).max(1000).describe('Texto da defesa (até 1000 caracteres).'),
@@ -134,7 +134,7 @@ export function registerInfractionsTools(server: McpServer, http: AxiosInstance)
     {
       title: 'Listar defesas de infração',
       annotations: READ_ONLY,
-      description: `Lista todas as defesas submetidas para uma infração específica. Doc: ${docBase}/endpoints/infractions/get_infractions_defenses`,
+      description: `Lista todas as defesas submetidas para uma infração específica. Doc: ${docBase}/get-infractions-defenses`,
       inputSchema: {
         id: z.string(),
       },
@@ -154,7 +154,7 @@ export function registerInfractionsTools(server: McpServer, http: AxiosInstance)
     {
       title: 'Consultar defesa de infração',
       annotations: READ_ONLY,
-      description: `Detalhe de uma defesa específica. Doc: ${docBase}/endpoints/infractions/get_infractions_defense_by_id`,
+      description: `Detalhe de uma defesa específica. Doc: ${docBase}/get-infractions-defense-by-id`,
       inputSchema: {
         id: z.string().describe('ID da infração.'),
         defenseId: z.string().describe('ID da defesa.'),

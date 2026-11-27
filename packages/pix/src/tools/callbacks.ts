@@ -21,7 +21,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Listar callbacks',
       annotations: READ_ONLY,
-      description: `Lista paginada dos logs de callbacks (webhooks) das transações da conta. Útil para auditoria e debug: filtre por hasError para achar entregas que falharam. Doc: ${docBase}/endpoints/callbacks/get_user_callbacks`,
+      description: `Lista paginada dos logs de callbacks (webhooks) das transações da conta. Útil para auditoria e debug: filtre por hasError para achar entregas que falharam. Doc: ${docBase}/get-user-callbacks`,
       inputSchema: {
         transactionId: z.string().optional(),
         webhookId: z.string().optional(),
@@ -53,7 +53,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Consultar callback',
       annotations: READ_ONLY,
-      description: `Retorna os detalhes completos de um callback específico: body enviado, resposta recebida, tempo de round-trip. Doc: ${docBase}/endpoints/callbacks/get_user_callback_by_id`,
+      description: `Retorna os detalhes completos de um callback específico: body enviado, resposta recebida, tempo de round-trip. Doc: ${docBase}/get-user-callback-by-id`,
       inputSchema: {
         id: z.string().min(1),
       },
@@ -73,7 +73,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Reenviar callback',
       annotations: ADDITIVE,
-      description: `Reenvia o callback de uma transação específica para a callbackUrl configurada. ${RESEND_LIMIT} Doc: ${docBase}/endpoints/callbacks/resend_user_callback_single`,
+      description: `Reenvia o callback de uma transação específica para a callbackUrl configurada. ${RESEND_LIMIT} Doc: ${docBase}/resend-user-callback-single`,
       inputSchema: {
         transactionId: z.string().min(1),
       },
@@ -93,7 +93,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Reenviar callbacks em lote',
       annotations: ADDITIVE,
-      description: `Reenvia de uma só vez todos os callbacks que casam com os filtros. ${RESEND_LIMIT} Doc: ${docBase}/endpoints/callbacks/resend_user_callbacks`,
+      description: `Reenvia de uma só vez todos os callbacks que casam com os filtros. ${RESEND_LIMIT} Doc: ${docBase}/resend-user-callbacks`,
       inputSchema: resendWindow,
     },
     async (args) => {
@@ -111,7 +111,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Reenviar callbacks de um webhook',
       annotations: ADDITIVE,
-      description: `Reenfileira as entregas que FALHARAM de um webhook específico. Use depois que o endpoint do cliente voltou do ar, para recuperar o que falhou naquele destino, sem reenviar o que já foi entregue nos outros. Aceitar não é entregar: a fila roda depois da resposta. ${RESEND_LIMIT} Doc: ${docBase}/endpoints/callbacks/resend_user_callbacks_webhook`,
+      description: `Reenfileira as entregas que FALHARAM de um webhook específico. Use depois que o endpoint do cliente voltou do ar, para recuperar o que falhou naquele destino, sem reenviar o que já foi entregue nos outros. Aceitar não é entregar: a fila roda depois da resposta. ${RESEND_LIMIT} Doc: ${docBase}/resend-user-callbacks-webhook`,
       inputSchema: {
         webhookId: z.string().min(1).describe('Id do webhook cujas entregas serão reenviadas.'),
       },
@@ -131,7 +131,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Reenviar entregas de webhooks por filtro',
       annotations: ADDITIVE,
-      description: `Reenfileira as entregas de webhook que FALHARAM num período. Para cada webhook, transação e evento vale só a última tentativa do período, reenviada apenas se falhou. Os filtros se aplicam às transações dessas entregas; sem webhookIds, cobre todos os webhooks ativos da conta. Aceitar não é entregar: a fila roda depois da resposta. ${RESEND_LIMIT} Doc: ${docBase}/endpoints/callbacks/resend_user_callbacks_webhooks`,
+      description: `Reenfileira as entregas de webhook que FALHARAM num período. Para cada webhook, transação e evento vale só a última tentativa do período, reenviada apenas se falhou. Os filtros se aplicam às transações dessas entregas; sem webhookIds, cobre todos os webhooks ativos da conta. Aceitar não é entregar: a fila roda depois da resposta. ${RESEND_LIMIT} Doc: ${docBase}/resend-user-callbacks-webhooks`,
       inputSchema: {
         ...resendWindow,
         webhookIds: z.array(z.string()).optional().describe('Webhooks a reenviar. Omita para todos os ativos.'),
@@ -152,7 +152,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Criar segredo de callback',
       annotations: ADDITIVE,
-      description: `Cria o segredo de callback da conta, usado para assinar (header X-Callback-Signature) as entregas feitas ao callbackUrl das transações. ${SECRET_ONCE} Se a conta já tiver segredo, a API recusa: use callbacks_rotate_secret. Doc: ${docBase}/endpoints/callbacks/create_user_callback_secret`,
+      description: `Cria o segredo de callback da conta, usado para assinar (header X-Callback-Signature) as entregas feitas ao callbackUrl das transações. ${SECRET_ONCE} Se a conta já tiver segredo, a API recusa: use callbacks_rotate_secret. Doc: ${docBase}/create-user-callback-secret`,
       inputSchema: {},
     },
     async () => {
@@ -170,7 +170,7 @@ export function registerCallbacksTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Rotacionar segredo de callback',
       annotations: DESTRUCTIVE,
-      description: `Troca o segredo de callback da conta. As entregas passam a ser assinadas com o segredo novo NA HORA, o que QUEBRA a verificação de assinatura do receptor até ele passar a usar o segredo novo. ${SECRET_ONCE} Doc: ${docBase}/endpoints/callbacks/rotate_user_callback_secret`,
+      description: `Troca o segredo de callback da conta. As entregas passam a ser assinadas com o segredo novo NA HORA, o que QUEBRA a verificação de assinatura do receptor até ele passar a usar o segredo novo. ${SECRET_ONCE} Doc: ${docBase}/rotate-user-callback-secret`,
       inputSchema: {},
     },
     async () => {

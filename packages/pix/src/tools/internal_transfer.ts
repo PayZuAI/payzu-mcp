@@ -23,7 +23,7 @@ export function registerInternalTransferTools(server: McpServer, http: AxiosInst
     {
       title: 'Transferência interna',
       annotations: DESTRUCTIVE,
-      description: `Transfere saldo entre contas PayZu por accountNumber (6 dígitos). Liquidação instantânea, sem passar pelo Pix tradicional. Se payerAccountNumber for omitido, usa a própria conta autenticada como pagadora. Doc: ${docBase}/endpoints/internal-transfer/post_internal_transfer`,
+      description: `Transfere saldo entre contas PayZu por accountNumber (6 dígitos). Liquidação instantânea, sem passar pelo Pix tradicional. Se payerAccountNumber for omitido, usa a própria conta autenticada como pagadora. Doc: ${docBase}/post-internal-transfer`,
       inputSchema: {
         amount: z.number().positive().multipleOf(0.01).describe('Valor em REAIS decimais (BRL).'),
         receiverAccountNumber: AccountNumber.describe('AccountNumber de 6 dígitos do destinatário.'),
@@ -51,7 +51,7 @@ export function registerInternalTransferTools(server: McpServer, http: AxiosInst
     {
       title: 'Consultar transferência interna',
       annotations: READ_ONLY,
-      description: `Consulta transferência interna por id, clientReference ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater na mesma transferência. Doc: ${docBase}/endpoints/internal-transfer/get_internal_transfer`,
+      description: `Consulta transferência interna por id, clientReference ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater na mesma transferência. Doc: ${docBase}/get-internal-transfer`,
       inputSchema: {
         id: z.string().optional(),
         clientReference: z.string().max(64).optional(),

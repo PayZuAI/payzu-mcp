@@ -13,7 +13,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Listar transações',
       annotations: READ_ONLY,
-      description: `Lista paginada das transações da conta (retorna total e pages). Filtros por status, tipo, método, período, valor, documento, nome, endToEndId, clientReference, virtualAccount e presença de QR Code. Doc: ${docBase}/endpoints/reports/get_user_transactions`,
+      description: `Lista paginada das transações da conta (retorna total e pages). Filtros por status, tipo, método, período, valor, documento, nome, endToEndId, clientReference, virtualAccount e presença de QR Code. Doc: ${docBase}/get-user-transactions`,
       inputSchema: {
         status: z.array(TxStatus).optional(),
         type: z.array(TxType).optional(),
@@ -49,7 +49,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Consultar transação',
       annotations: READ_ONLY,
-      description: `Retorna uma transação específica com logs de callback e infrações vinculadas. Doc: ${docBase}/endpoints/reports/get_user_transaction_by_id`,
+      description: `Retorna uma transação específica com logs de callback e infrações vinculadas. Doc: ${docBase}/get-user-transaction-by-id`,
       inputSchema: {
         id: z.string().min(1),
       },
@@ -69,7 +69,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Gerar relatório CSV',
       annotations: ADDITIVE,
-      description: `Cria um job assíncrono que gera CSV de transações para o período/filtros. Use para janelas grandes (mês, ano). Acompanhe via reports_get_job. Doc: ${docBase}/endpoints/reports/post_user_report`,
+      description: `Cria um job assíncrono que gera CSV de transações para o período/filtros. Use para janelas grandes (mês, ano). Acompanhe via reports_get_job. Doc: ${docBase}/post-user-report`,
       inputSchema: {
         dateFrom: z.string().describe('ISO 8601'),
         dateTo: z.string().describe('ISO 8601'),
@@ -92,7 +92,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Listar relatórios',
       annotations: READ_ONLY,
-      description: `Lista paginada dos jobs de relatório criados pela conta autenticada, com filtro por status e período. Doc: ${docBase}/endpoints/reports/list_user_reports`,
+      description: `Lista paginada dos jobs de relatório criados pela conta autenticada, com filtro por status e período. Doc: ${docBase}/list-user-reports`,
       inputSchema: {
         status: z.array(ReportStatus).optional(),
         createdAtFrom: z.string().optional().describe('ISO 8601'),
@@ -120,7 +120,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Consultar relatório',
       annotations: READ_ONLY,
-      description: `Retorna o status de um job de relatório (PENDING, RUNNING, COMPLETED, FAILED). Doc: ${docBase}/endpoints/reports/get_user_report`,
+      description: `Retorna o status de um job de relatório (PENDING, RUNNING, COMPLETED, FAILED). Doc: ${docBase}/get-user-report`,
       inputSchema: {
         id: z.string().min(1),
       },
@@ -140,7 +140,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Baixar relatório',
       annotations: READ_ONLY,
-      description: `Retorna URL assinada (validade curta) para download do CSV. Só funciona com o job em COMPLETED; arquivo expirado não volta, gere outro. Doc: ${docBase}/endpoints/reports/download_user_report`,
+      description: `Retorna URL assinada (validade curta) para download do CSV. Só funciona com o job em COMPLETED; arquivo expirado não volta, gere outro. Doc: ${docBase}/download-user-report`,
       inputSchema: {
         id: z.string().min(1),
       },
@@ -160,7 +160,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Extrato bancário',
       annotations: READ_ONLY,
-      description: `Extrato da conta na janela pedida, linha a linha, com operação, motivo e saldo antes e depois de cada lançamento. Diferente de reports_list_transactions, que lista transações Pix: aqui aparece TODO movimento de saldo, tarifa e ajuste inclusive. Doc: ${docBase}/endpoints/reports/get_user_bank_statements`,
+      description: `Extrato da conta na janela pedida, linha a linha, com operação, motivo e saldo antes e depois de cada lançamento. Diferente de reports_list_transactions, que lista transações Pix: aqui aparece TODO movimento de saldo, tarifa e ajuste inclusive. Doc: ${docBase}/get-user-bank-statements`,
       inputSchema: {
         createdAtFrom: z.string().describe('Início da janela, ISO 8601. Obrigatório.'),
         createdAtTo: z.string().describe('Fim da janela, ISO 8601. Obrigatório.'),
@@ -191,7 +191,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Lançamento do extrato',
       annotations: READ_ONLY,
-      description: `Detalhe de um lançamento do extrato pelo id. Doc: ${docBase}/endpoints/reports/get_user_bank_statement`,
+      description: `Detalhe de um lançamento do extrato pelo id. Doc: ${docBase}/get-user-bank-statement`,
       inputSchema: { id: z.string().min(1) },
     },
     async ({ id }) => {
@@ -209,7 +209,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Depósitos pendentes',
       annotations: READ_ONLY,
-      description: `Depósitos que chegaram mas ainda não foram conciliados com uma cobrança. É onde se procura o Pix que o cliente diz ter pago e não apareceu. Doc: ${docBase}/endpoints/reports/get_user_deposit_pending`,
+      description: `Depósitos que chegaram mas ainda não foram conciliados com uma cobrança. É onde se procura o Pix que o cliente diz ter pago e não apareceu. Doc: ${docBase}/get-user-deposit-pending`,
       inputSchema: {
         status: z.array(DepositPendingStatus).optional(),
         document: Document.optional().describe('CPF (11) ou CNPJ (14) do pagador, só dígitos.'),
@@ -238,7 +238,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Depósito pendente',
       annotations: READ_ONLY,
-      description: `Detalhe de um depósito pendente pelo id. Doc: ${docBase}/endpoints/reports/get_user_deposit_pending_by_id`,
+      description: `Detalhe de um depósito pendente pelo id. Doc: ${docBase}/get-user-deposit-pending-by-id`,
       inputSchema: { id: z.string().min(1) },
     },
     async ({ id }) => {
@@ -256,7 +256,7 @@ export function registerReportsTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Resumo da conta',
       annotations: READ_ONLY,
-      description: `Totais consolidados do período para depósitos, saques, comissões e ajustes, com contagem e valor por status. Responde "quanto entrou este mês" sem baixar a lista inteira de transações. Sem datas, cobre do início do dia anterior (horário de Brasília) até agora. Doc: ${docBase}/endpoints/reports/get_user_summary`,
+      description: `Totais consolidados do período para depósitos, saques, comissões e ajustes, com contagem e valor por status. Responde "quanto entrou este mês" sem baixar a lista inteira de transações. Sem datas, cobre do início do dia anterior (horário de Brasília) até agora. Doc: ${docBase}/get-user-summary`,
       inputSchema: {
         dateFrom: z.string().optional().describe('Início do período, ISO 8601.'),
         dateTo: z.string().optional().describe('Fim do período, ISO 8601.'),

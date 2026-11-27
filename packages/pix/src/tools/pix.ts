@@ -16,7 +16,7 @@ export function registerPixTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Criar cobrança Pix',
       annotations: ADDITIVE,
-      description: `Cria uma cobrança Pix dinâmica e retorna QR Code + ID. Repetir o mesmo clientReference devolve a cobrança já criada (idempotência). Doc: ${docBase}/endpoints/pix-operations/post_pix`,
+      description: `Cria uma cobrança Pix dinâmica e retorna QR Code + ID. Repetir o mesmo clientReference devolve a cobrança já criada (idempotência). Doc: ${docBase}/post-pix`,
       inputSchema: {
         amount: Amount,
         clientReference: z.string().min(1).max(64).describe('Identificador externo único e determinístico (ex: order-123 ou UUID v4).'),
@@ -48,7 +48,7 @@ export function registerPixTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Consultar cobrança Pix',
       annotations: READ_ONLY,
-      description: `Consulta uma cobrança Pix por id, clientReference, endToEndId ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater na mesma cobrança. Retorna status atual e detalhes. Doc: ${docBase}/endpoints/pix-operations/get_pix`,
+      description: `Consulta uma cobrança Pix por id, clientReference, endToEndId ou virtualAccount. Informe ao menos um; se informar mais de um, todos precisam bater na mesma cobrança. Retorna status atual e detalhes. Doc: ${docBase}/get-pix`,
       inputSchema: {
         id: z.string().optional(),
         clientReference: z.string().max(64).optional(),
@@ -71,7 +71,7 @@ export function registerPixTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'QR Code da cobrança',
       annotations: READ_ONLY,
-      description: `Retorna a imagem PNG do QR Code de uma cobrança Pix. O código copia-e-cola vem em qrCodeText, via pix_get. Doc: ${docBase}/endpoints/pix-operations/get_pix_qrcode`,
+      description: `Retorna a imagem PNG do QR Code de uma cobrança Pix. O código copia-e-cola vem em qrCodeText, via pix_get. Doc: ${docBase}/get-pix-qrcode`,
       inputSchema: {
         id: z.string().min(1).describe('ID da cobrança Pix (retornado por pix_create).'),
       },
@@ -91,7 +91,7 @@ export function registerPixTools(server: McpServer, http: AxiosInstance) {
     {
       title: 'Comprovante Pix',
       annotations: READ_ONLY,
-      description: `Retorna o comprovante de uma transação Pix em PDF, como data URI base64 no campo base64. Doc: ${docBase}/endpoints/pix-operations/get_proof`,
+      description: `Retorna o comprovante de uma transação Pix em PDF, como data URI base64 no campo base64. Doc: ${docBase}/get-proof`,
       inputSchema: {
         id: z.string().min(1).describe('ID da transação.'),
       },
